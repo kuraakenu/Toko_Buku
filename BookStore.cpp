@@ -97,3 +97,10 @@ void menu(){
     cout << "==========================================\n";
     cout << "Input: ";
 }
+
+void mantap(){
+    cout << "cepmek";
+    cout << "cepmek";
+    cout << "cepmek";
+    cout << "cepmek";
+}
