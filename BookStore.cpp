@@ -6,7 +6,12 @@ using namespace std;
 void menu();
 int showBook(int i, int jumlahBuku);
 const int  kapasitasBuku = 2;
-//aaaa
+
+
+//asfnmwmfajmworkj
+//sdawiknmefstikmawtfm
+
+
 struct buku{
     string namaBuku;
     string penerbitBuku;
