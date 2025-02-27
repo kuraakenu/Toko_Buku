@@ -3,35 +3,30 @@
 
 using namespace std;
 
-void menu();
+void menu(int a);
 int showBook(int i, int jumlahBuku);
-const int  kapasitasBuku = 2;
-
-
-//asfnmwmfajmworkj
-//sdawiknmefstikmawtfm
-
+const int  kapasitasBuku = 100;
 
 struct buku{
     string namaBuku;
     string penerbitBuku;
     string authorBuku;
     int tahunTerbit;
+    int harga;
 };
 buku daftarBuku[kapasitasBuku];
 
 int main(){
     system("cls");
     bool found = false;
-    char pil;
-    int jumlahBuku = 0;
+    int jumlahBuku = 0, pil = 0;
 
     do{
-        menu();
+        menu(jumlahBuku);
         cin >> pil;
 
         switch(pil){
-            case '1':
+            case 1:
             system("cls");
                 if(jumlahBuku < kapasitasBuku){
                     cout << "Masukkan Nama Buku: ";
@@ -45,35 +40,39 @@ int main(){
                     cin >> daftarBuku[jumlahBuku].tahunTerbit;
                     jumlahBuku++;
                     system("cls");
-                    cout << "Buku Berhasil Ditambahkan!\n";
+                    cout << "===| Buku Berhasil Ditambahkan! |===\n";
                     system("pause");
                     system("cls");
                 }else{
-                    cout << "Kapasitas Rak Sudah Penuh!\n";
+                    cout << "===| Kapasitas Rak Sudah Penuh! |===\n";
                     system("pause");
                     system("cls");
                 }
             break;
-            case '2':
+            case 2:
                 cout << left << setw(5) << "No" << setw(30) << "Judul Buku" << setw(30) << "Penerbit" << setw(30) << "Pengarang" << setw(15) << "Tahun Terbit" << '\n';
                 showBook(0, jumlahBuku);
                 system("pause");
                 system("cls");
             break;
+            case 3:
+                cout << "Good Bye!\n";
+                system("pause");
+                system("cls");
+            break;
             default:
-            system("cls");
             cout << "Input Salah!\n";
             system("pause");
+            system("cls");
             break;
         }
 
-    }while(pil != '3');
+    }while(pil >= 4);
     
     return 0;
 }
 
 int showBook(int i, int jumlahBuku){
-    int loop = jumlahBuku;
     if (jumlahBuku <= 0) {
         system("cls");
         cout << "==============================\n";
@@ -81,26 +80,25 @@ int showBook(int i, int jumlahBuku){
         cout << "==============================\n";
         return 0;
     }
-    if (i < loop) {
+    if (i < jumlahBuku) {
         cout << "---------------------------------------------------------------------------------------------------------------\n";
         cout << left << setw(5) << i + 1 << setw(30) << daftarBuku[i].namaBuku << setw(30) << daftarBuku[i].penerbitBuku << setw(30) << daftarBuku[i].authorBuku << setw(15) << daftarBuku[i].tahunTerbit << '\n';
         showBook(i + 1, jumlahBuku);
     }
 }
 
-void menu(){
+void menu(int a){
     system("cls");
-    cout << "=========== Library Management ===========\n";
+    cout << "==============| Book Store |==============\n";
     cout << "| 1. Tambah Buku                         |\n";
     cout << "| 2. Tampilkan Buku                      |\n";
     cout << "| 3. EXIT                                |\n";
-    cout << "==========================================\n";
+    cout << "=============| " << "In Stock = " << a << " |=============\n";
     cout << "Input: ";
 }
 
-void mantap(){
-    cout << "cepmek";
-    cout << "cepmek";
-    cout << "cepmek";
-    cout << "cepmek";
+void login(){
+    cout << "=== | Login | ===\n";
+    cout << "[1]. Penjual\n";
+    cout << "[2]. Pembeli\n";
 }
