@@ -14,19 +14,21 @@ struct buku{
     int tahunTerbit;
     int harga;
 };
+
 buku daftarBuku[kapasitasBuku];
 
 int main(){
     system("cls");
     bool found = false;
-    int jumlahBuku = 0, pil = 0;
+    char pil;
+    int jumlahBuku = 0;
 
     do{
         menu(jumlahBuku);
         cin >> pil;
 
         switch(pil){
-            case 1:
+            case '1':
             system("cls");
                 if(jumlahBuku < kapasitasBuku){
                     cout << "Masukkan Nama Buku: ";
@@ -49,13 +51,13 @@ int main(){
                     system("cls");
                 }
             break;
-            case 2:
+            case '2':
                 cout << left << setw(5) << "No" << setw(30) << "Judul Buku" << setw(30) << "Penerbit" << setw(30) << "Pengarang" << setw(15) << "Tahun Terbit" << '\n';
                 showBook(0, jumlahBuku);
                 system("pause");
                 system("cls");
             break;
-            case 3:
+            case '3':
                 cout << "Good Bye!\n";
                 system("pause");
                 system("cls");
@@ -67,7 +69,7 @@ int main(){
             break;
         }
 
-    }while(pil >= 4);
+    }while(pil != '3');
     
     return 0;
 }
@@ -95,10 +97,4 @@ void menu(int a){
     cout << "| 3. EXIT                                |\n";
     cout << "=============| " << "In Stock = " << a << " |=============\n";
     cout << "Input: ";
-}
-
-void login(){
-    cout << "=== | Login | ===\n";
-    cout << "[1]. Penjual\n";
-    cout << "[2]. Pembeli\n";
 }
