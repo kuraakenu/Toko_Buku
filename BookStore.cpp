@@ -5,6 +5,7 @@ using namespace std;
 
 void menu(int a);
 int showBook(int i, int jumlahBuku);
+
 const int  kapasitasBuku = 100;
 
 struct buku{
@@ -82,10 +83,10 @@ int showBook(int i, int jumlahBuku){
         cout << "==============================\n";
         return 0;
     }
-    if (i < jumlahBuku) {
+    if (i < sizeof(jumlahBuku)/sizeof(int)) {
         cout << "---------------------------------------------------------------------------------------------------------------\n";
         cout << left << setw(5) << i + 1 << setw(30) << daftarBuku[i].namaBuku << setw(30) << daftarBuku[i].penerbitBuku << setw(30) << daftarBuku[i].authorBuku << setw(15) << daftarBuku[i].tahunTerbit << '\n';
-        showBook(i + 1, jumlahBuku);
+        return showBook(i + 1, jumlahBuku);
     }
 }
 
