@@ -1,28 +1,34 @@
+
 #include <iostream>
 #include <iomanip>
 
 using namespace std;
+//Manajemen Toko Buku
 
+void cari(int jumlahBuku);
 void menu(int a);
 int addBook(int jumlahBuku, int a);
 int showBook(int i, int jumlahBuku);
+void cari(int jumlahBuku);
 
 const int kapasitasBuku = 100;
 
 struct buku{
+    
     string namaBuku;
     string penerbitBuku;
     string authorBuku;
+    string genre;
     int tahunTerbit;
     int harga;
 };
-
 buku daftarBuku[kapasitasBuku];
+
 
 int main(){
     system("cls");
     bool found = false;
-    char pil;
+    int pil;
     int jumlahBuku = 0;
 
     do{
@@ -30,8 +36,9 @@ int main(){
         cin >> pil;
 
         switch(pil){
-            case '1':
-            system("cls");    int a;
+            case 1:
+            system("cls");
+            int a;
             cout << "===| Add Book |===\n";
             cout << "Masukkan Jumlah Buku yang Ingin Ditambahkan: ";
             cin >> a;
@@ -39,14 +46,19 @@ int main(){
             cout << "===| Buku Berhasil Ditambahkan |===\n";
             system("pause");
             break;
-            case '2':
+            case 2:
                 cout << left << setw(5) << "No" << setw(30) << "Judul Buku" << setw(30) << "Penerbit" << setw(30) << "Pengarang" << setw(30) << "Tahun Terbit" << setw(15) << "Harga" <<  '\n';
                 showBook(0, jumlahBuku);
                 system("pause");
                 
                 system("cls");
             break;
-            case '3':
+            case 3:
+                cari(jumlahBuku);
+                system("pause");
+                system("cls");
+            break;
+            case 4:
                 cout << "Good Bye!\n";
                 system("pause");
                 system("cls");
@@ -58,7 +70,7 @@ int main(){
             break;
         }
 
-    }while(pil != '3');
+    }while(pil != 4);
     
     return 0;
 }
@@ -106,7 +118,56 @@ void menu(int a){
     cout << "==============| Book Store |==============\n";
     cout << "| 1. Tambah Buku                         |\n";
     cout << "| 2. Tampilkan Buku                      |\n";
-    cout << "| 3. EXIT                                |\n";
+    cout << "| 3. Cari Buku                           |\n";
+    cout << "| 4. EXIT                                |\n";
     cout << "=============| " << "In Stock = " << a << " |=============\n";
     cout << "Input: ";
 }
+
+void cari(int jumlahBuku){
+    system("cls");
+    int pil; int j = -1;
+    string cari;
+    bool found = false;
+
+    do{
+        cout << "Ingin mencari berdasarkan apa?\n";
+        cout << "1. Judul Buku\n";
+        cout << "2. Penerbit\n";
+        cout << "3. Penulis\n";
+        cout << "4. Genre\n";
+        cout << "5. BACK\n";
+        cout << "Masukkan pilihan : ";
+        cin >> pil;
+        switch(pil){
+            case 1 :
+                cin.ignore();
+                cout << "Masukkan Judul Buku : ";
+                getline(cin, cari);
+                for (int i = 0; i < kapasitasBuku; i++){
+                    if(daftarBuku[i].namaBuku == cari){
+                        j = i;
+                        found = true;
+                        break;
+                    }
+                }
+                if(found){
+                    cout << "berikut buku yang data buku yang anda cari" << endl
+                    << "Judul Buku : " << daftarBuku[j].namaBuku << endl
+                    << "Penerbit Buku : " << daftarBuku[j].penerbitBuku << endl
+                    << "Author Buku : " << daftarBuku[j].authorBuku << endl
+                    << "Tahun Terbitrbit Buku : " << daftarBuku[j].tahunTerbit << endl
+                    << "Harga Buku : " << daftarBuku[j].harga << endl;
+                    found = false;
+                }else{
+                    cout << "buku yang dicari tidak ditemukan, mungkin sudah bersama dengan orang lain. Kadang hidup hanya untuk merelakan!" << endl;
+                }
+            break;
+            case 5:
+                cout << "Anda akan diarahkan ke menu utama!\n";
+            default:
+            break;
+        }
+    }while(pil != 5);
+}
+
