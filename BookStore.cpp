@@ -3,7 +3,7 @@
 #include <iomanip>
 
 using namespace std;
-//Manajemen Toko Buku
+//Manajemen Toko Buku cuy
 
 void cari(int jumlahBuku);
 void menu(int a);
