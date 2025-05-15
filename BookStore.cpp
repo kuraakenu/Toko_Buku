@@ -14,7 +14,6 @@ void cari(int jumlahBuku);
 const int kapasitasBuku = 100;
 
 struct buku{
-    
     string namaBuku;
     string penerbitBuku;
     string authorBuku;
