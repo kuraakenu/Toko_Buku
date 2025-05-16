@@ -1,17 +1,21 @@
-
 #include <iostream>
+#include <cctype>
+#include <fstream>
 #include <iomanip>
 
 using namespace std;
-//Manajemen Toko Buku cuy
 
-void cari(int jumlahBuku);
-void menu(int a);
-int addBook(int jumlahBuku, int a);
-int showBook(int i, int jumlahBuku);
-void cari(int jumlahBuku);
-
+const string fileLoginInfo = "loginInfo.csv";
+const string fileAdmin = "adminInfo.csv";
 const int kapasitasBuku = 100;
+
+void mainMenu();
+void firstMenu(string &user, int &mode);
+void adminMenu(string user);
+void buyerMenu(string user);
+
+bool registerUsers(string &user, string pasw);
+bool loginUsers(string &user, string pasw, int &mode);
 
 struct buku{
     string namaBuku;
@@ -23,150 +27,199 @@ struct buku{
 };
 buku daftarBuku[kapasitasBuku];
 
-
 int main(){
     system("cls");
-    bool found = false;
-    int pil;
-    int jumlahBuku = 0;
+    mainMenu();
+    return 0;
+}
 
-    do{
-        menu(jumlahBuku);
+void mainMenu(){
+
+    string user;
+    int mode = 0;
+    firstMenu(user, mode);
+
+    switch(mode){
+        case 1:
+            system("cls");
+            adminMenu(user);
+        break;
+        case 2:
+            system("cls");
+            buyerMenu(user);
+        break;
+    }
+}
+
+void adminMenu(string user){
+    cout << "Hai Admin "<< user << "! \n";
+    cout << "Selamat Datang di Dashboard GaraMedia Online\n";
+    cout << "[1]. Tambah Buku\n"; // ya kaya tambah buku biasa, masukin dulu ke struct array baru masukin ke file, formatnya (judul, genre, penulis, penerbit, tahun terbit)
+    cout << "[2]. List Buku\n"; // showing judul dari buku aja, nanti contohnya misal 
+                                //1. Buku A
+                                //2. Buku B
+                                //3. dst
+                                // 4. back
+    cout << "[3]. Cari Buku\n"; // fungsi cari yg di file gw blm tau kek apa si, buat apa aja yang penting bisa dicari, nanti pas dah ketemu dibuat list kek gini aja atau buat sendiri lah bebas
+                                // =================================================
+                                // Judul Buku   : Buku A
+                                // Genre        : Seegs
+                                // Penulis      : Wahyu
+                                // Penerbit     : blabal
+                                // Tahun Terbit : 2424
+                                // =================================================
+                                // menu back
+
+    cout << "[4]. EXIT\n";
+    cout << "Input: ";
+}
+
+void buyerMenu(string user){
+    cout << "Hai "<< user << "! \n";
+    cout << "Selamat Datang di GaraMedia Online\n";
+    cout << "[1]. Beli Buku\n"; // beli buku dibuat ada struknya si yak, jadi pas user udh cekout brp buku, insert duitnya, nanti muncul struknya
+    cout << "[2]. List Buku\n"; // jadiin 1 fungsi aja ama yang versi adminnya, sama soalnya tinggal panggil doang
+    cout << "[3]. Cari Buku\n"; // jadiin 1 fungsi aja ama yang versi adminnya, sama soalnya tinggal panggil doang, kasih kondisi tambahan deh, abis dicari, ada menu beli, kek gini
+                                // =================================================
+                                // Judul Buku   : Buku A
+                                // Genre        : Seegs
+                                // Penulis      : Wahyu
+                                // Penerbit     : blabal
+                                // Tahun Terbit : 2424
+                                // =================================================
+                                // menu beli // ini ngarah ke fungsi menu Beli Buku
+                                // menu back
+    cout << "[4]. EXIT\n";
+    cout << "Input: ";
+}
+
+
+void firstMenu(string &user, int &mode){
+    int pil;
+    string pasw;
+
+    while(true){
+        cout << "|| Selamat Datang di GaraMedia ||\n";
+        cout << "[1]. Register\n";
+        cout << "[2]. Login\n";
+        cout << "[3]. EXIT\n";
+        cout << "Input: ";
         cin >> pil;
 
         switch(pil){
             case 1:
-            system("cls");
-            int a;
-            cout << "===| Add Book |===\n";
-            cout << "Masukkan Jumlah Buku yang Ingin Ditambahkan: ";
-            cin >> a;
-            jumlahBuku = addBook(jumlahBuku, a);
-            cout << "===| Buku Berhasil Ditambahkan |===\n";
-            system("pause");
-            break;
-            case 2:
-                cout << left << setw(5) << "No" << setw(30) << "Judul Buku" << setw(30) << "Penerbit" << setw(30) << "Pengarang" << setw(30) << "Tahun Terbit" << setw(15) << "Harga" <<  '\n';
-                showBook(0, jumlahBuku);
-                system("pause");
+                cout << "Username: ";
+                cin >> user;
+                cout << "Password: ";
+                cin >> pasw;
+                if(registerUsers(user, pasw)){
+                    cout << "Registrasi Berhasil! Silakan Login!\n";
+                    system("pause");
+                }
+                break;
                 
-                system("cls");
+            case 2:
+                cout << "Username: ";
+                cin >> user;
+                cout << "Password: ";
+                cin >> pasw;
+                if(loginUsers(user, pasw, mode)){
+                    cout << "Login Berhasil!\n";
+                    system("pause");
+                }
+                return;
             break;
             case 3:
-                cari(jumlahBuku);
+                cout << "Terimakasih Telah Berkunjung!\n";
                 system("pause");
-                system("cls");
-            break;
-            case 4:
-                cout << "Good Bye!\n";
-                system("pause");
-                system("cls");
+                exit(0);
             break;
             default:
-            cout << "Input Salah!\n";
+                cout << "Input Salah!\n";
+                system("pause");
+        }
+    }
+}
+
+bool registerUsers(string &user, string pasw){
+
+    // Check apakah username available or tidak
+
+    ifstream fileCheck(fileLoginInfo);
+    string line;
+
+    if(!fileCheck.is_open()){
+        cout << "File Error!\n";
+        system("pause");
+        return false;
+    }
+
+    while(getline(fileCheck, line)){
+        if(line.rfind(user + ',')){
+            cout << "Username Telah Digunakan!\n";
             system("pause");
-            system("cls");
+            return false;
+        }else{
             break;
         }
-
-    }while(pil != 4);
-    
-    return 0;
-}
-
-int addBook(int jumlahBuku, int a){
-    if(a == 0 || jumlahBuku >= kapasitasBuku){
-        if(jumlahBuku >= kapasitasBuku){
-            cout << "===| Rak Sudah Penuh |===\n";
-            system("pause");
-        }
-        return jumlahBuku;
     }
-    cout << "Masukkan Nama Buku: ";
-    cin.ignore();
-    getline(cin, daftarBuku[jumlahBuku].namaBuku);
-    cout << "Masukkan Penerbit Buku: ";
-    getline(cin, daftarBuku[jumlahBuku].penerbitBuku);
-    cout << "Masukkan Author Buku: ";
-    getline(cin, daftarBuku[jumlahBuku].authorBuku);
-    cout << "Masukkan Tahun Terbit: ";
-    cin >> daftarBuku[jumlahBuku].tahunTerbit;
-    cout << "Masukkan Harga Buku: ";
-    cin >> daftarBuku[jumlahBuku].harga;
-    system("cls");
-    return addBook(jumlahBuku + 1, a - 1);
+    fileCheck.close();
+
+    // Jika, available lanjut 
+
+    ofstream fileInput(fileLoginInfo, ios::app);
+    fileInput << user << ' ' << pasw << '\n';
+    fileInput.close();
+
+    return true;
 }
 
-int showBook(int i, int jumlahBuku){
-    if (jumlahBuku <= 0) {
-        system("cls");
-        cout << "==============================\n";
-        cout << "|       Tidak ada buku       |\n";
-        cout << "==============================\n";
-        return 0;
+bool loginUsers(string &user, string pasw, int &mode){
+    ifstream fileCheckAdmin(fileAdmin);
+    ifstream fileCheckUsers(fileLoginInfo);
+    string line, tempUsn, tempPasw;
+
+    if(!fileCheckAdmin.is_open()){
+        cout << "File Error!\n";
+        system("pause");
+        return false;
     }
-    if (i < jumlahBuku) {
-        cout << "----------------------------------------------------------------------------------------------------------------------------------------\n";
-        cout << left << setw(5) << i + 1 << setw(30) << daftarBuku[i].namaBuku << setw(30) << daftarBuku[i].penerbitBuku << setw(30) << daftarBuku[i].authorBuku << setw(30) << daftarBuku[i].tahunTerbit << setw(15) << daftarBuku[i].harga << '\n';
-        return showBook(i + 1, jumlahBuku);
+
+    if(!fileCheckUsers.is_open()){
+        cout << "File Error!\n";
+        system("pause");
+        return false;
     }
-}
 
-void menu(int a){
-    system("cls");
-    cout << "==============| Book Store |==============\n";
-    cout << "| 1. Tambah Buku                         |\n";
-    cout << "| 2. Tampilkan Buku                      |\n";
-    cout << "| 3. Cari Buku                           |\n";
-    cout << "| 4. EXIT                                |\n";
-    cout << "=============| " << "In Stock = " << a << " |=============\n";
-    cout << "Input: ";
-}
-
-void cari(int jumlahBuku){
-    system("cls");
-    int pil; int j = -1;
-    string cari;
-    bool found = false;
-
-    do{
-        cout << "Ingin mencari berdasarkan apa?\n";
-        cout << "1. Judul Buku\n";
-        cout << "2. Penerbit\n";
-        cout << "3. Penulis\n";
-        cout << "4. Genre\n";
-        cout << "5. BACK\n";
-        cout << "Masukkan pilihan : ";
-        cin >> pil;
-        switch(pil){
-            case 1 :
-                cin.ignore();
-                cout << "Masukkan Judul Buku : ";
-                getline(cin, cari);
-                for (int i = 0; i < kapasitasBuku; i++){
-                    if(daftarBuku[i].namaBuku == cari){
-                        j = i;
-                        found = true;
-                        break;
+    while(fileCheckAdmin >> tempUsn >> tempPasw){
+        if(tempUsn == user){
+            if(tempPasw != pasw){
+                cout << "Username atau Password Admin Salah!\n";
+                system("pause");
+                fileCheckAdmin.close();
+                return false;
+            }else{
+                fileCheckAdmin.close();
+                mode = 1;
+                return true;
+            }
+        }else{
+            fileCheckAdmin.close();
+            while(fileCheckUsers >> tempUsn >> tempPasw){
+                if(tempUsn == user){
+                    if(tempPasw != pasw){
+                        cout << "Username atau Password Salah!\n";
+                        system("pause");
+                        fileCheckUsers.close();
+                        return false;
+                    }else{
+                        fileCheckUsers.close();
+                        mode = 2;
+                        return true;
                     }
                 }
-                if(found){
-                    cout << "berikut buku yang data buku yang anda cari" << endl
-                    << "Judul Buku : " << daftarBuku[j].namaBuku << endl
-                    << "Penerbit Buku : " << daftarBuku[j].penerbitBuku << endl
-                    << "Author Buku : " << daftarBuku[j].authorBuku << endl
-                    << "Tahun Terbitrbit Buku : " << daftarBuku[j].tahunTerbit << endl
-                    << "Harga Buku : " << daftarBuku[j].harga << endl;
-                    found = false;
-                }else{
-                    cout << "buku yang dicari tidak ditemukan, mungkin sudah bersama dengan orang lain. Kadang hidup hanya untuk merelakan!" << endl;
-                }
-            break;
-            case 5:
-                cout << "Anda akan diarahkan ke menu utama!\n";
-            default:
-            break;
+            }
         }
-    }while(pil != 5);
+    }
 }
 
