@@ -69,7 +69,6 @@ void adminMenu(string user){
                                 // Tahun Terbit : 2424
                                 // =================================================
                                 // menu back
-
     cout << "[4]. EXIT\n";
     cout << "Input: ";
 }
@@ -99,6 +98,7 @@ void firstMenu(string &user, int &mode){
     string pasw;
 
     while(true){
+        system("cls");
         cout << "|| Selamat Datang di GaraMedia ||\n";
         cout << "[1]. Register\n";
         cout << "[2]. Login\n";
@@ -126,8 +126,8 @@ void firstMenu(string &user, int &mode){
                 if(loginUsers(user, pasw, mode)){
                     cout << "Login Berhasil!\n";
                     system("pause");
+                    return;
                 }
-                return;
             break;
             case 3:
                 cout << "Terimakasih Telah Berkunjung!\n";
@@ -146,7 +146,8 @@ bool registerUsers(string &user, string pasw){
     // Check apakah username available or tidak
 
     ifstream fileCheck(fileLoginInfo);
-    string line;
+    string tempUsn;
+    bool sudahAda = false;
 
     if(!fileCheck.is_open()){
         cout << "File Error!\n";
@@ -154,15 +155,18 @@ bool registerUsers(string &user, string pasw){
         return false;
     }
 
-    while(getline(fileCheck, line)){
-        if(line.rfind(user + ',')){
-            cout << "Username Telah Digunakan!\n";
-            system("pause");
-            return false;
-        }else{
-            break;
+    while(fileCheck >> tempUsn){
+        if(tempUsn == user){
+            sudahAda = true;
         }
     }
+
+    if(sudahAda){
+        cout << "Username Telah Digunakan!\n";
+        system("pause");
+        return false;
+    }
+
     fileCheck.close();
 
     // Jika, available lanjut 
@@ -177,7 +181,9 @@ bool registerUsers(string &user, string pasw){
 bool loginUsers(string &user, string pasw, int &mode){
     ifstream fileCheckAdmin(fileAdmin);
     ifstream fileCheckUsers(fileLoginInfo);
-    string line, tempUsn, tempPasw;
+    string tempUsn, tempPasw;
+    bool adminCoy = false;
+    bool userCoy = false;
 
     if(!fileCheckAdmin.is_open()){
         cout << "File Error!\n";
@@ -193,33 +199,52 @@ bool loginUsers(string &user, string pasw, int &mode){
 
     while(fileCheckAdmin >> tempUsn >> tempPasw){
         if(tempUsn == user){
-            if(tempPasw != pasw){
-                cout << "Username atau Password Admin Salah!\n";
-                system("pause");
-                fileCheckAdmin.close();
-                return false;
-            }else{
-                fileCheckAdmin.close();
-                mode = 1;
-                return true;
-            }
+            adminCoy = true;
+            fileCheckAdmin.close();
+            break;
+        }else{
+            break;
+        }
+    }
+
+    if(adminCoy){
+        if(tempPasw != pasw){
+            cout << "Username atau Password Admin Salah!\n";
+            system("pause");
+            fileCheckAdmin.close();
+            return false;
         }else{
             fileCheckAdmin.close();
-            while(fileCheckUsers >> tempUsn >> tempPasw){
-                if(tempUsn == user){
-                    if(tempPasw != pasw){
-                        cout << "Username atau Password Salah!\n";
-                        system("pause");
-                        fileCheckUsers.close();
-                        return false;
-                    }else{
-                        fileCheckUsers.close();
-                        mode = 2;
-                        return true;
-                    }
-                }
+            mode = 1;
+            return true;
+        }
+    }else{
+        while(fileCheckUsers >> tempUsn >> tempPasw){
+            if(tempUsn == user){
+                userCoy = true;
+                fileCheckUsers.close();
+                break;
             }
         }
     }
+
+    if(userCoy){
+        if(tempPasw != pasw){
+            cout << "Username atau Password Salah!\n";
+            system("pause");
+            fileCheckUsers.close();
+            return false;
+        }else{
+            fileCheckUsers.close();
+            mode = 2;
+            return true;
+        }
+    }else{
+        cout << "Username Tidak Ada! Silakan Register Terlebih Dahulu!\n";
+        fileCheckUsers.close();
+        system("pause");
+        return false;
+    }
+
 }
 
