@@ -202,8 +202,6 @@ bool loginUsers(string &user, string pasw, int &mode){
             adminCoy = true;
             fileCheckAdmin.close();
             break;
-        }else{
-            break;
         }
     }
 
