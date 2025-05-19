@@ -30,7 +30,7 @@ struct buku{
     string penerbitBuku;
     string authorBuku;
     string genre;
-    int tahunTerbit;
+    string tahunTerbit;
     int harga;
 };
 buku daftarBuku[kapasitasBuku];
@@ -74,7 +74,7 @@ void adminMenu(string user){
         cout << "[3]. Cari Buku\n"; // fungsi cari yg di file gw blm tau kek apa si, buat apa aja yang penting bisa dicari, nanti pas dah ketemu dibuat list kek gini aja atau buat sendiri lah bebas
                                     // =================================================
                                     // Judul Buku   : Buku A
-                                    // Genre        : Seegs
+                                    // Genre        : oke
                                     // Penulis      : Wahyu
                                     // Penerbit     : blabal
                                     // Tahun Terbit : 2424
@@ -98,16 +98,33 @@ void adminMenu(string user){
 
 void listBook(){
     ifstream fileCheck(fileListBuku);
-    string lineCheck, judulTemp, idTemp, authorTemp, penerbitTemp, tahunTemp, hargaTemp;
+    string lineCheck, judulTemp, idTemp, authorTemp, penerbitTemp, tahunTemp, hargaTemp, genreTemp;
+    int i = 0;
+    int hargaInt;
+
     if(!fileCheck.is_open()){
         cout << "File Error!\n";
         system("pause");
         return;
     }
-    while(fileCheck >> idTemp >> judulTemp >> authorTemp >> penerbitTemp >> tahunTemp >> hargaTemp){
+    while(fileCheck >> idTemp >> judulTemp >> genreTemp >> authorTemp >> penerbitTemp >> tahunTemp >> hargaTemp){
         judulTemp = UnderscoreToSpace(judulTemp);
-        cout << judulTemp << ' ' << idTemp << '\n';
+        i++;
+
+        daftarBuku[i].idBuku = idTemp;
+        daftarBuku[i].namaBuku = judulTemp;
+        daftarBuku[i].authorBuku = authorTemp;
+        daftarBuku[i].penerbitBuku = penerbitTemp;
+        daftarBuku[i].tahunTerbit = tahunTemp;
+        hargaInt = stoi(hargaTemp);
+        daftarBuku[i].harga = hargaInt;
+        
     }
+
+    for(int f = 0; f < i; f++){
+        cout << daftarBuku[f].namaBuku << ' ' << daftarBuku[f].idBuku << '\n';
+    }
+    
     system("pause");
 
 }
@@ -149,6 +166,7 @@ void addBook(int newBook, int tambahBuku){
 
     cout << "Masukkan Genre Buku: ";
     getline(cin, daftarBuku[tambahBuku].genre);
+    genreTemp = spaceToUnderscore(daftarBuku[tambahBuku].genre);
     
     cout << "Masukkan Author Buku: ";
     getline(cin, daftarBuku[tambahBuku].authorBuku);
@@ -162,7 +180,7 @@ void addBook(int newBook, int tambahBuku){
     cin >> daftarBuku[tambahBuku].tahunTerbit;
     cout << "Masukkan Harga Buku: ";
     cin >> daftarBuku[tambahBuku].harga;
-    fileInput << daftarBuku[tambahBuku].idBuku << ' ' << judulTemp << ' ' << authorTemp << ' ' << penerbitTemp << ' ' << daftarBuku[tambahBuku].tahunTerbit << ' ' << daftarBuku[tambahBuku].harga << '\n';
+    fileInput << daftarBuku[tambahBuku].idBuku << ' ' << judulTemp << ' ' << genreTemp << ' ' << authorTemp << ' ' << penerbitTemp << ' ' << daftarBuku[tambahBuku].tahunTerbit << ' ' << daftarBuku[tambahBuku].harga << '\n';
     system("cls");
 
     return addBook(newBook + 1, tambahBuku - 1);
@@ -176,7 +194,8 @@ void buyerMenu(string user){
     cout << "[3]. Cari Buku\n"; // jadiin 1 fungsi aja ama yang versi adminnya, sama soalnya tinggal panggil doang, kasih kondisi tambahan deh, abis dicari, ada menu beli, kek gini
                                 // =================================================
                                 // Judul Buku   : Buku A
-                                // Genre        : Seegs
+                                // Genre        : oke
+                                
                                 // Penulis      : Wahyu
                                 // Penerbit     : blabal
                                 // Tahun Terbit : 2424
