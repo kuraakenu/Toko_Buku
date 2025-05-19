@@ -171,7 +171,7 @@ void addBook(int newBook, int tambahBuku){
 void buyerMenu(string user){
     cout << "Hai "<< user << "! \n";
     cout << "Selamat Datang di GaraMedia Online\n";
-    cout << "[1]. Beli Buku\n"; // beli buku dibuat ada struknya si yak, jadi pas user udh cekout brp buku, insert duitnya, nanti muncul struknya
+    cout << "[1]. Pinjam Buku\n"; // beli buku dibuat ada struknya si yak, jadi pas user udh cekout brp buku, insert duitnya, nanti muncul struknya
     cout << "[2]. List Buku\n"; // jadiin 1 fungsi aja ama yang versi adminnya, sama soalnya tinggal panggil doang
     cout << "[3]. Cari Buku\n"; // jadiin 1 fungsi aja ama yang versi adminnya, sama soalnya tinggal panggil doang, kasih kondisi tambahan deh, abis dicari, ada menu beli, kek gini
                                 // =================================================
