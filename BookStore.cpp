@@ -7,7 +7,7 @@ using namespace std;
 
 const string fileLoginInfo = "loginInfo.csv";
 const string fileAdmin = "adminInfo.csv";
-const string fileListBuku = "ListBuku.csv";
+const string fileListBuku = "listBuku.csv";
 const int kapasitasBuku = 100;
 
 string spaceToUnderscore(string str);
@@ -26,7 +26,7 @@ void listBook();
 
 struct buku{
     string idBuku;
-    string namaBuku;
+    string judulBuku;
     string penerbitBuku;
     string authorBuku;
     string genre;
@@ -112,7 +112,7 @@ void listBook(){
         i++;
 
         daftarBuku[i].idBuku = idTemp;
-        daftarBuku[i].namaBuku = judulTemp;
+        daftarBuku[i].judulBuku = judulTemp;
         daftarBuku[i].authorBuku = authorTemp;
         daftarBuku[i].penerbitBuku = penerbitTemp;
         daftarBuku[i].tahunTerbit = tahunTemp;
@@ -122,7 +122,7 @@ void listBook(){
     }
 
     for(int f = 0; f < i; f++){
-        cout << daftarBuku[f].namaBuku << ' ' << daftarBuku[f].idBuku << '\n';
+        cout << daftarBuku[f].judulBuku << ' ' << daftarBuku[f].idBuku << '\n';
     }
     
     system("pause");
@@ -161,8 +161,8 @@ void addBook(int newBook, int tambahBuku){
 
     cout << "Masukkan Judul Buku: ";
     cin.ignore();
-    getline(cin, daftarBuku[tambahBuku].namaBuku);
-    judulTemp = spaceToUnderscore(daftarBuku[tambahBuku].namaBuku);
+    getline(cin, daftarBuku[tambahBuku].judulBuku);
+    judulTemp = spaceToUnderscore(daftarBuku[tambahBuku].judulBuku);
 
     cout << "Masukkan Genre Buku: ";
     getline(cin, daftarBuku[tambahBuku].genre);
