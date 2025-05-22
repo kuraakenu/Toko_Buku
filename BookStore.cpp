@@ -5,24 +5,36 @@
 
 using namespace std;
 
-const string fileLoginInfo = "loginInfo.csv";
-const string fileAdmin = "adminInfo.csv";
-const string fileListBuku = "listBuku.csv";
+const string fileLoginInfo = "loginInfo.txt";
+const string fileAdmin = "adminInfo.txt";
+const string fileListBuku = "listBuku.txt";
 const int kapasitasBuku = 100;
 
+// Function Edit String DLL ===========================
 string spaceToUnderscore(string str);
 string UnderscoreToSpace(string str);
+string EditUpLowCase(string str);
+// ====================================================
 
+// Function Menu ======================================
 void mainMenu();
 void firstMenu(string &user, int &mode);
 void adminMenu(string user);
 void buyerMenu(string user);
+// ====================================================
 
+// Function Login Register ============================
 bool registerUsers(string &user, string pasw);
 bool loginUsers(string &user, string pasw, int &mode);
+// ====================================================
 
-void addBook(int newBook, int tambahBuku);
-void listBook();
+// Function di dalam Menu =============================
+void addBook(int tambahBuku);
+void listBook(int jumlahBuku);
+void fileLoader(int *a);
+void searchBook(int jumlahBuku);
+void sortBook(int jumlahBuku);
+//=====================================================
 
 struct buku{
     string idBuku;
@@ -32,6 +44,7 @@ struct buku{
     string genre;
     string tahunTerbit;
     int harga;
+    int stok;
 };
 buku daftarBuku[kapasitasBuku];
 
@@ -59,99 +72,134 @@ void mainMenu(){
     }
 }
 
+// Memindahkan data file kedalam Struct Array
+void fileLoader(int *a){
+    // klo gada file, membuat file
+    ifstream fileCheck(fileListBuku);
+    if(!fileCheck.is_open()){
+        ofstream fileCreate(fileListBuku);
+        fileCreate.close();
+    }
+    fileCheck.close();
+
+    ifstream fileLoad(fileListBuku);
+    string judulTemp, idTemp, authorTemp, penerbitTemp, tahunTemp, genreTemp;
+    int i = 0;
+    int hargaInt, stokInt;
+
+    while(fileLoad >> idTemp >> judulTemp >> genreTemp >> authorTemp >> penerbitTemp >> tahunTemp >> hargaInt >> stokInt){
+        judulTemp = UnderscoreToSpace(judulTemp);
+        genreTemp = UnderscoreToSpace(genreTemp);
+        authorTemp = UnderscoreToSpace(authorTemp);
+        penerbitTemp = UnderscoreToSpace(penerbitTemp);
+
+        daftarBuku[i].idBuku = idTemp;
+        daftarBuku[i].judulBuku = judulTemp;
+        daftarBuku[i].genre = genreTemp;
+        daftarBuku[i].authorBuku = authorTemp;
+        daftarBuku[i].penerbitBuku = penerbitTemp;
+        daftarBuku[i].tahunTerbit = tahunTemp;
+        daftarBuku[i].harga = hargaInt;
+        daftarBuku[i].stok = stokInt;
+        i++;
+    }
+
+    fileLoad.close();
+    *a = i;
+}
+
+// Menu dari POV Atmin
 void adminMenu(string user){
+    
     int pil, newBook, tambahBuku;
-    while(pil !=4){
+    pil = 0;
+    
+    while(pil != 5){
+        tambahBuku = 0;
+        // Fungsi Memindah File ke Struct Array
+        int jumlahBukuDiGudang = 0;
+        fileLoader(&jumlahBukuDiGudang);
+
         system("cls");
         cout << "Hai Admin "<< user << "! \n";
         cout << "Selamat Datang di Dashboard GaraMedia Online\n";
         cout << "[1]. Tambah Buku\n";
-        cout << "[2]. List Buku\n"; // showing judul dari buku aja, nanti contohnya misal 
-                                    //1. Buku A
-                                    //2. Buku B
-                                    //3. dst
-                                    // 4. back
-        cout << "[3]. Cari Buku\n"; // fungsi cari yg di file gw blm tau kek apa si, buat apa aja yang penting bisa dicari, nanti pas dah ketemu dibuat list kek gini aja atau buat sendiri lah bebas
-                                    // =================================================
-                                    // Judul Buku   : Buku A
-                                    // Genre        : oke
-                                    // Penulis      : Wahyu
-                                    // Penerbit     : blabal
-                                    // Tahun Terbit : 2424
-                                    // =================================================
-                                    // menu back
-        cout << "[4]. EXIT\n";
+        cout << "[2]. List Buku\n"; // jika file kosong maka tidak tampil
+        cout << "[3]. Cari Buku\n"; // jika file kosong maka tidak tampil
+        cout << "[4]. Sort Buku\n"; // jika file kosong maka tidak tampil
+        cout << "[?]. Hapus Data\n"; // blm ntar aj, kodingannya udh ada tinggal sesuain
+        cout << "[5]. EXIT\n";
         cout << "Input: ";
         cin >> pil;
         switch(pil){
             case 1:
                 cout << "Jumlah Buku Yang Ingin Ditambahkan: ";
                 cin >> tambahBuku;
-                addBook(newBook, tambahBuku);
+                addBook(tambahBuku);
             break;
             case 2:
-                listBook();
+                if(jumlahBukuDiGudang == 0){
+                    cout << "Gudang Kosong!\n";
+                    cout << "Tambahkan Buku Dulu!\n";
+                    system("pause");
+                }else{
+                    listBook(jumlahBukuDiGudang);
+                }
+            break;
+            case 3:
+                if(jumlahBukuDiGudang == 0){
+                    cout << "Gudang Kosong!\n";
+                    cout << "Tambahkan Buku Dulu!\n";
+                    system("pause");
+                }else{
+                    searchBook(jumlahBukuDiGudang);
+                }
+            break;
+            case 4:
+                if(jumlahBukuDiGudang == 0){
+                    cout << "Gudang Kosong!\n";
+                    cout << "Tambahkan Buku Dulu!\n";
+                    system("pause");
+                }else{
+                    sortBook(jumlahBukuDiGudang);
+                }
+            break;
+            case 5:
+                exit(0);
             break;
         }
     }
 }
 
-void listBook(){
-    ifstream fileCheck(fileListBuku);
-    string lineCheck, judulTemp, idTemp, authorTemp, penerbitTemp, tahunTemp, hargaTemp, genreTemp;
-    int i = 0;
-    int hargaInt;
-
-    if(!fileCheck.is_open()){
-        cout << "File Error!\n";
-        system("pause");
-        return;
-    }
-    while(fileCheck >> idTemp >> judulTemp >> genreTemp >> authorTemp >> penerbitTemp >> tahunTemp >> hargaTemp){
-        judulTemp = UnderscoreToSpace(judulTemp);
-        i++;
-
-        daftarBuku[i].idBuku = idTemp;
-        daftarBuku[i].judulBuku = judulTemp;
-        daftarBuku[i].authorBuku = authorTemp;
-        daftarBuku[i].penerbitBuku = penerbitTemp;
-        daftarBuku[i].tahunTerbit = tahunTemp;
-        hargaInt = stoi(hargaTemp);
-        daftarBuku[i].harga = hargaInt;
-        
-    }
-
-    for(int f = 0; f < i; f++){
-        cout << daftarBuku[f].judulBuku << ' ' << daftarBuku[f].idBuku << '\n';
-    }
-    
-    system("pause");
-
-}
-
-void addBook(int newBook, int tambahBuku){
+// Menambahkan Buku Menggunakan Rekursi
+void addBook(int tambahBuku){
     ofstream fileInput(fileListBuku, ios::app);
     string judulTemp, penerbitTemp, authorTemp, genreTemp, lineCheck;
+    int stokTemp;
 
     int count = 0;
 
+    // Cek Apakah file ada atau tidak / terbuka atau tidak
     if(!fileInput.is_open()){
         cout << "File Error!\n";
         system("pause");
         return;
     }
     
+    ifstream fileCheck(fileListBuku);
+    while(getline(fileCheck, lineCheck)){ // cek ada brp buku di file
+        count += 1;
+    }
+    fileCheck.close();
+
+    // karna rekursi, tambahBuku akan terus berkurang sampai 0
     if(tambahBuku == 0){
-        ifstream fileCheck(fileListBuku);
-        while(getline(fileCheck, lineCheck)){
-            count += 1;
-        }
+        fileInput.close();
+
         system("cls");
         cout << "Selesai! Anda Baru Saja Menambahkan Buku Kedalam Gudang!\n";
-        cout << "Di Gudang Sekarang Berisi " << count + 1 << " Judul Buku!\n";
+        cout << "Di Gudang Sekarang Berisi " << count + 1 << " Judul Buku!\n"; // + 1 karena yang 
         system("pause");
-        fileInput.close();
-        fileCheck.close();
         return;
     }
 
@@ -162,52 +210,317 @@ void addBook(int newBook, int tambahBuku){
     cout << "Masukkan Judul Buku: ";
     cin.ignore();
     getline(cin, daftarBuku[tambahBuku].judulBuku);
+    judulTemp = EditUpLowCase(daftarBuku[tambahBuku].judulBuku);
     judulTemp = spaceToUnderscore(daftarBuku[tambahBuku].judulBuku);
+
+    /////// ini niatnya, klo dh ada judul bukunya, tinggal nambah stok doang, gw gtw jirlah, next aj
+    // getline(cin, judulTemp);
+    // judulTemp = EditUpLowCase(judulTemp);
+
+    // for(int i = 0; i < count; i++){
+    //     if(judulTemp == daftarBuku[i].judulBuku){
+    //         cout << "Tambah Stok Buku: ";
+    //         cin >> stokTemp;
+    //         int total = daftarBuku[i].stok + stokTemp;
+    //             fileInput << daftarBuku[i].idBuku << " " << spaceToUnderscore(daftarBuku[i].judulBuku) << " " << spaceToUnderscore(daftarBuku[i].genre) << " " 
+    //             << spaceToUnderscore(daftarBuku[i].authorBuku) << " " << spaceToUnderscore(daftarBuku[i].penerbitBuku)<< " " <<
+    //             daftarBuku[i].tahunTerbit << " " << daftarBuku[i].harga << " " << daftarBuku[i].stok + stokTemp << '\n';
+    //             fileInput.close();
+    //             cout << "Anda Berhasil Menambahkan Stok ke Buku " << daftarBuku[i].judulBuku << " Menjadi " << total << " !";
+    //             system("pause");
+    //             return;
+    //     }else{
+    //         break;
+    //     }
+    // }
 
     cout << "Masukkan Genre Buku: ";
     getline(cin, daftarBuku[tambahBuku].genre);
+    genreTemp = EditUpLowCase(daftarBuku[tambahBuku].genre);
     genreTemp = spaceToUnderscore(daftarBuku[tambahBuku].genre);
     
     cout << "Masukkan Author Buku: ";
     getline(cin, daftarBuku[tambahBuku].authorBuku);
+    authorTemp = EditUpLowCase(daftarBuku[tambahBuku].authorBuku);
     authorTemp = spaceToUnderscore(daftarBuku[tambahBuku].authorBuku);
 
     cout << "Masukkan Penerbit Buku: ";
     getline(cin, daftarBuku[tambahBuku].penerbitBuku);
+    penerbitTemp = EditUpLowCase(daftarBuku[tambahBuku].penerbitBuku);
     penerbitTemp = spaceToUnderscore(daftarBuku[tambahBuku].penerbitBuku);
 
     cout << "Masukkan Tahun Terbit: ";
     cin >> daftarBuku[tambahBuku].tahunTerbit;
     cout << "Masukkan Harga Buku: ";
     cin >> daftarBuku[tambahBuku].harga;
-    fileInput << daftarBuku[tambahBuku].idBuku << ' ' << judulTemp << ' ' << genreTemp << ' ' << authorTemp << ' ' << penerbitTemp << ' ' << daftarBuku[tambahBuku].tahunTerbit << ' ' << daftarBuku[tambahBuku].harga << '\n';
+
+    cout << "Masukkan Jumlah Stok: ";
+    cin >> daftarBuku[tambahBuku].stok;
+
+    fileInput << daftarBuku[tambahBuku].idBuku << ' ' << judulTemp << ' ' << genreTemp << ' ' << authorTemp << ' ' << penerbitTemp << ' ' << daftarBuku[tambahBuku].tahunTerbit << ' ' << daftarBuku[tambahBuku].harga << ' ' << daftarBuku[tambahBuku].stok << '\n';
     system("cls");
 
-    return addBook(newBook + 1, tambahBuku - 1);
+    return addBook(tambahBuku - 1);
 }
 
+// Menampilkan List Buku Yang Ada Di File
+void listBook(int jumlahBuku){
+    // Output
+    system("cls");
+    cout << string(65, '=') << '\n';
+    cout << left << setw(15) << "ID" << setw(25) << "Judul" << setw(15) << "Stok" << setw(15) << "Harga" << '\n';
+    cout << string(65, '=') << '\n';
+    for(int f = 0; f < jumlahBuku; f++){
+        cout << left << setw(15) << daftarBuku[f].idBuku << setw(25) << daftarBuku[f].judulBuku << setw(15) << daftarBuku[f].stok << setw(15) << daftarBuku[f].harga << '\n';
+    }
+    cout << string(65, '=') << '\n';
+    system("pause");
+
+}
+
+// Mencari Buku di dalam Struct Array menggunakan Sequential Search
+void searchBook(int jumlahBuku){
+    int pil = 0;
+    while(pil != 4){
+        system("cls");
+        cout << "[1]. Cari Judul Buku\n";
+        cout << "[2]. Cari Author Buku\n";
+        cout << "[3]. Cari Genre Buku\n";
+        cout << "[4]. BACK\n";
+        cout << "Input: ";
+        cin >> pil;
+
+        string cari;
+        int i, j;
+        bool found = false;
+
+        switch(pil){
+            case 1: // Sequential without Sentinel
+                cout << "Masukkan Judul Buku: ";
+                cin.ignore();
+                getline(cin, cari);
+                cari = EditUpLowCase(cari);
+                i = 0;
+                while(i <= jumlahBuku){
+                    if(daftarBuku[i].judulBuku == cari){
+                        found = true;
+                        break;
+                    }else{
+                        i += 1;
+                    }
+                }
+                if(!found){
+                    cout << "Judul Buku " << cari << " Tidak Tersedia!\n";
+                }else{
+                    system("cls");
+                    cout << "Buku Ditemukan!\n";
+                    cout << "-\n";
+                    cout << "=================================================\n";
+                    cout << "Judul Buku     : " << daftarBuku[i].judulBuku << '\n';
+                    cout << "Genre          : " << daftarBuku[i].genre << '\n';
+                    cout << "Author         : " << daftarBuku[i].authorBuku << '\n';
+                    cout << "Penerbit       : " << daftarBuku[i].penerbitBuku<< '\n';
+                    cout << "Tahun Terbit   : " << daftarBuku[i].tahunTerbit << '\n';
+                    cout << "Harga          : " << daftarBuku[i].harga << '\n';
+                    cout << "Stok           : " << daftarBuku[i].stok << '\n';
+                    cout << "=================================================\n";
+                }
+                system("pause");
+            break;
+            case 2: // Sequential without Sentinel
+                cout << "Masukkan Author Buku: ";
+                cin.ignore();
+                getline(cin, cari);
+                cari = EditUpLowCase(cari);
+                j = 0;
+                system("cls");
+                cout << string(30, '=') << '\n';
+                cout << left << setw(24) << "Judul" << setw(15) << "Stok" << '\n';
+                cout << string(30, '=') << '\n';
+
+                for(int i = 0; i <= jumlahBuku; i++){
+                    if(daftarBuku[i].authorBuku == cari){
+                        cout << left << setw(24) << daftarBuku[i].judulBuku << setw(15) << daftarBuku[i].stok << '\n';
+                        found = true;
+                        j++;
+                    }
+                }
+                cout << string(30, '=') << '\n';
+
+                if(!found){
+                    system("cls");
+                    cout << "Buku Dengan Author " << cari << " Tidak Tersedia!\n";
+                }
+                system("pause");
+
+            break;
+            case 3: // Sequential without Sentinel
+                cout << "Masukkan Genre Buku: ";
+                cin.ignore();
+                getline(cin, cari);
+                cari = EditUpLowCase(cari);
+                j = 0;
+                system("cls");
+                cout << string(30, '=') << '\n';
+                cout << left << setw(24) << "Judul" << setw(15) << "Stok" << '\n';
+                cout << string(30, '=') << '\n';
+
+                for(int i = 0; i <= jumlahBuku; i++){
+                    if(daftarBuku[i].genre == cari){
+                        cout << left << setw(24) << daftarBuku[i].judulBuku << setw(15) << daftarBuku[i].stok << '\n';
+                        found = true;
+                        j++;
+                    }
+                }
+                cout << string(30, '=') << '\n';
+
+                if(!found){
+                    system("cls");
+                    cout << "Buku Dengan Genre " << cari << " Tidak Tersedia!\n";
+                }
+                system("pause");
+            break;
+            case 4:
+                return;
+            break;
+            default:
+                cout << "Input Salah!\n";
+                system("pause");
+            break;
+        }
+    }
+
+}
+
+// Mensortir Buku di dalam Struct Array menggunakan Quick Sort
+void sortBook(int jumlahBuku){
+    system("cls");
+    int pil = 0;
+    bool done = false;
+    while(pil != 3){
+        system("cls");
+        cout << "[1]. Urutkan Berdasarkan Judul\n";
+        cout << "[2]. Urutkan Berdasarkan Harga\n";
+        cout << "[3]. BACK\n";
+        cout << "Input: ";
+        cin >> pil;
+        int temp;
+        switch(pil){
+            case 1: // Bubble Sort
+                for(int i = 0; i < jumlahBuku - 1; i++){
+                    for(int j = 0; j < jumlahBuku - 1 - i; j++){
+                        if(daftarBuku[j].judulBuku > daftarBuku[j+1].judulBuku){
+                            buku temp = daftarBuku[j];
+                            daftarBuku[j] = daftarBuku[j+1];
+                            daftarBuku[j+1] = temp;
+                        }
+                    }
+                }
+                done = true;
+            break;
+            case 2: // Straight Selection Sort
+                for(int i = 0; i < jumlahBuku; i++){
+                    for(int j = i + 1; j < jumlahBuku; j++){
+                        if(daftarBuku[i].harga > daftarBuku[j].harga){
+                            buku temp = daftarBuku[i];
+                            daftarBuku[i] = daftarBuku[j];
+                            daftarBuku[j] = temp;
+                        }
+                    }
+                }
+                done = true;
+            break;
+            case 3:
+                return;
+            break;
+            default:
+                cout << "Input Salah!\n";
+                system("pause");
+            break;
+        }
+
+        if(done){
+            ofstream SaveFile(fileListBuku, ios::out);
+            for(int i = 0; i < jumlahBuku; i++){
+                SaveFile << daftarBuku[i].idBuku << " " << spaceToUnderscore(daftarBuku[i].judulBuku) << " " << spaceToUnderscore(daftarBuku[i].genre) << " " 
+                << spaceToUnderscore(daftarBuku[i].authorBuku) << " " << spaceToUnderscore(daftarBuku[i].penerbitBuku)<< " " <<
+                daftarBuku[i].tahunTerbit << " " << daftarBuku[i].harga << " " << daftarBuku[i].stok << '\n';
+            }
+            SaveFile.close();
+            cout << "Data Telah Berhasil Diurutkan dan Disimpan Kedalam File\n";
+            system("pause");
+        }else{
+            cout << "Gagal Mensort Data!\n";
+            system("pause");
+            return;
+        
+        }
+    }
+}
+
+// Menu dari POV Buyer
 void buyerMenu(string user){
-    cout << "Hai "<< user << "! \n";
-    cout << "Selamat Datang di GaraMedia Online\n";
-    cout << "[1]. Beli Buku\n"; // beli buku dibuat ada struknya si yak, jadi pas user udh cekout brp buku, insert duitnya, nanti muncul struknya
-    cout << "[2]. List Buku\n"; // jadiin 1 fungsi aja ama yang versi adminnya, sama soalnya tinggal panggil doang
-    cout << "[3]. Cari Buku\n"; // jadiin 1 fungsi aja ama yang versi adminnya, sama soalnya tinggal panggil doang, kasih kondisi tambahan deh, abis dicari, ada menu beli, kek gini
-                                // =================================================
-                                // Judul Buku   : Buku A
-                                // Genre        : oke
-                                
-                                // Penulis      : Wahyu
-                                // Penerbit     : blabal
-                                // Tahun Terbit : 2424
-                                // =================================================
-                                // menu beli // ini ngarah ke fungsi menu Beli Buku
-                                // menu back
-    cout << "[4]. EXIT\n";
-    cout << "Input: ";
+    int pil = 0;
+    while(pil != 5){
+        system("cls");
+        int jumlahBukuDiToko = 0;
+        fileLoader(&jumlahBukuDiToko);
+        cout << "Hai "<< user << "! \n";
+        cout << "Selamat Datang di GaraMedia Online\n";
+        cout << "[1]. Beli Buku\n"; 
+        cout << "[2]. List Buku\n"; 
+        cout << "[3]. Cari Buku\n"; 
+        cout << "[4]. Sort Buku\n";
+        cout << "[5]. EXIT\n";
+        cout << "Input: ";
+        cin >> pil;
+
+        switch(pil){
+            case 1:
+                if(jumlahBukuDiToko == 0){
+                    cout << "Buku Habis!\n";
+                    cout << "Toko Sedang Tutup!\n";
+                    system("pause");
+                }else{
+                    // gas coy
+                }
+            break;
+            case 2:
+                if(jumlahBukuDiToko == 0){
+                    cout << "Buku Habis!\n";
+                    cout << "Toko Sedang Tutup!\n";
+                    system("pause");
+                }else{
+                    listBook(jumlahBukuDiToko);
+                }
+            break;
+            case 3:
+                if(jumlahBukuDiToko == 0){
+                    cout << "Buku Habis!\n";
+                    cout << "Toko Sedang Tutup!\n";
+                    system("pause");
+                }else{
+                    searchBook(jumlahBukuDiToko);
+                }
+            break;
+            case 4:
+                if(jumlahBukuDiToko == 0){
+                    cout << "Buku Habis!\n";
+                    cout << "Toko Sedang Tutup!\n";
+                    system("pause");
+                }else{
+                    sortBook(jumlahBukuDiToko);
+                }
+            break;
+            case 5:
+                exit(0);
+            break;
+        }
+
+    }
 }
 
-
-void firstMenu(string &user, int &mode){
+void firstMenu(string &user, int &mode){ // kenapa pake reference user? karena biar ga perlu return dan nilai yang di mainMenu() terganti sementara dengan perubahan user yang ada disini, mode juga gitu
     int pil;
     string pasw;
 
@@ -226,7 +539,7 @@ void firstMenu(string &user, int &mode){
                 cin >> user;
                 cout << "Password: ";
                 cin >> pasw;
-                if(registerUsers(user, pasw)){
+                if(registerUsers(user, pasw)){ // klo hasil return true
                     cout << "Registrasi Berhasil! Silakan Login!\n";
                     system("pause");
                 }
@@ -237,7 +550,7 @@ void firstMenu(string &user, int &mode){
                 cin >> user;
                 cout << "Password: ";
                 cin >> pasw;
-                if(loginUsers(user, pasw, mode)){
+                if(loginUsers(user, pasw, mode)){ // klo hasil return true
                     cout << "Login Berhasil!\n";
                     system("pause");
                     return;
@@ -255,13 +568,13 @@ void firstMenu(string &user, int &mode){
     }
 }
 
-bool registerUsers(string &user, string pasw){
-
-    // Check apakah username available or tidak
+bool registerUsers(string &user, string pasw){ 
 
     ifstream fileCheck(fileLoginInfo);
+    ifstream fileAdminCheck(fileAdmin);
     string tempUsn;
-    bool sudahAda = false;
+    bool sudahAda = false; 
+    bool admin = false;
 
     if(!fileCheck.is_open()){
         cout << "File Error!\n";
@@ -269,9 +582,21 @@ bool registerUsers(string &user, string pasw){
         return false;
     }
 
-    while(fileCheck >> tempUsn){
-        if(tempUsn == user){
-            sudahAda = true;
+    while(fileAdminCheck >> tempUsn){ // ini cek perkata di file user admin, "aku " gitu. password jg kena cek sih 
+        if(tempUsn == user){ // klo ada admin, true
+            admin = true; 
+        }
+    }
+
+    if(admin){ // klo true, kena return false;
+        cout << "Username Telah Digunakan!\n";
+        system("pause");
+        return false;
+    }else{ // klo false, lanjut cek di file user buyer
+        while(fileCheck >> tempUsn){ // ini cek perkata di file user buyer, "aku " gitu. password jg kena cek sih
+            if(tempUsn == user){ 
+                sudahAda = true;
+            }
         }
     }
 
@@ -283,8 +608,6 @@ bool registerUsers(string &user, string pasw){
 
     fileCheck.close();
 
-    // Jika, available lanjut 
-
     ofstream fileInput(fileLoginInfo, ios::app);
     fileInput << user << ' ' << pasw << '\n';
     fileInput.close();
@@ -294,7 +617,7 @@ bool registerUsers(string &user, string pasw){
 
 bool loginUsers(string &user, string pasw, int &mode){
     ifstream fileCheckAdmin(fileAdmin);
-    ifstream fileCheckUsers(fileLoginInfo);
+    ifstream fileCheckUsers(fileLoginInfo); 
     string tempUsn, tempPasw;
     bool adminCoy = false;
     bool userCoy = false;
@@ -311,15 +634,15 @@ bool loginUsers(string &user, string pasw, int &mode){
         return false;
     }
 
-    while(fileCheckAdmin >> tempUsn >> tempPasw){
-        if(tempUsn == user){
+    while(fileCheckAdmin >> tempUsn >> tempPasw){ // ini cek di perkata di file, "aku " gitu. password jg kena cek sih 
+        if(tempUsn == user){ // nah disini itu yang dicek file admin dlu, jadi klo username ada di admin, dia admin
             adminCoy = true;
             fileCheckAdmin.close();
             break;
         }
     }
 
-    if(adminCoy){
+    if(adminCoy){ // klo true dia admin, mode 1, cek mode 1 itu buat apa di mainMenu()
         if(tempPasw != pasw){
             cout << "Username atau Password Admin Salah!\n";
             system("pause");
@@ -330,7 +653,7 @@ bool loginUsers(string &user, string pasw, int &mode){
             mode = 1;
             return true;
         }
-    }else{
+    }else{ // klo false dia user buyer, tapi cek dulu ada gk usernamenya, klo ada true
         while(fileCheckUsers >> tempUsn >> tempPasw){
             if(tempUsn == user){
                 userCoy = true;
@@ -340,7 +663,7 @@ bool loginUsers(string &user, string pasw, int &mode){
         }
     }
 
-    if(userCoy){
+    if(userCoy){ // klo true dia user buyer , mode 2, cek mode 2 itu buat apa di mainMenu()
         if(tempPasw != pasw){
             cout << "Username atau Password Salah!\n";
             system("pause");
@@ -351,7 +674,7 @@ bool loginUsers(string &user, string pasw, int &mode){
             mode = 2;
             return true;
         }
-    }else{
+    }else{ // ini kalo usercoy false, username gada di file user buyer ama admin
         cout << "Username Tidak Ada! Silakan Register Terlebih Dahulu!\n";
         fileCheckUsers.close();
         system("pause");
@@ -363,9 +686,9 @@ bool loginUsers(string &user, string pasw, int &mode){
 string spaceToUnderscore(string str){
     string temp = str;
 
-    for(int i = 0; i < str.length(); i++){
-        if(temp[i] == ' '){
-            temp.replace(i,1,1,'_');
+    for(int i = 0; i < str.length(); i++){ // loop nya i < panjang str
+        if(temp[i] == ' '){ // cek dlu ada space atau ga 
+            temp.replace(i,1,1,'_'); // klo ada, direplace sesuai urutan spasi di char tempnya, 1 pertama itu jumlah char yg di hapus, 1 kedua itu banyak char si '_' buat gantiin yang diapus
         }
     }
 
@@ -375,11 +698,30 @@ string spaceToUnderscore(string str){
 string UnderscoreToSpace(string str){
     string temp = str;
 
-    for(int i = 0; i < str.length(); i++){
-        if(temp[i] == '_'){
-            temp.replace(i,1,1,' ');
+    for(int i = 0; i < str.length(); i++){ // loop nya i < panjang str
+        if(temp[i] == '_'){ // cek dlu ada space atau ga 
+            temp.replace(i,1,1,' '); // klo ada, direplace sesuai urutan underscore di char tempnya, 1 pertama itu jumlah char yg di hapus, 1 kedua itu banyak char si ' ' buat gantiin yang diapus
         }
     }
  
     return temp;
+}
+
+string EditUpLowCase(string str){
+    bool newWord = true; // apakah awal kata baru
+
+    for(char &lw : str){ // loop mengubah semua char di str menjadi kecil , // : adalah range-based loop, melakukan pengulangan untuk setiap elemen str
+        lw = tolower(lw); // mengubah char yang ada di variabel lw menjadi kecil
+    }
+
+    for(char &up : str){
+        if(isspace(up)){ // cek apakah char tersebut merupakan spasi, jika iya, next char bakal kapital
+            newWord = true; // setelah spasi adalah awal kata baru
+        }else if(newWord){ // dan jika new word, char selanjutnya setelah spasi
+            up = toupper(up); // mengubah char yang ada di variabel up menjadi kapital
+            newWord = false; // setelah diubah artinya, next char bukan kapital
+        }
+    }
+
+    return str;
 }
