@@ -791,6 +791,7 @@ void buybook(int jumlahBuku){
             // }
         } else if(bayar < totalharga){
             cout << "Maaf Uang Anda Tidak Cukup\n";
+            cout << "Silahkan mengulang\n";
         }
     }
     system("pause");
