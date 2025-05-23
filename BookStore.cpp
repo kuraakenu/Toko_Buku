@@ -34,6 +34,7 @@ void listBook(int jumlahBuku);
 void fileLoader(int *a);
 void searchBook(int jumlahBuku);
 void sortBook(int jumlahBuku);
+void buybook(int jumlahBuku);
 //=====================================================
 
 struct buku{
@@ -483,6 +484,7 @@ void buyerMenu(string user){
                     system("pause");
                 }else{
                     // gas coy
+                    buybook(jumlahBukuDiToko);
                 }
             break;
             case 2:
@@ -724,4 +726,72 @@ string EditUpLowCase(string str){
     }
 
     return str;
+}
+
+void buybook(int jumlahBuku){
+    string cari; char balik;
+    int i, j, bayar, kembalian, jmlhbli, totalharga;
+    bool found = false, lanjut;
+    system("cls");
+    cout << "Masukkan judul buku : ";
+    cin.ignore();
+    getline(cin, cari);
+    cari = EditUpLowCase(cari);
+    i = 0;
+    while(i <= jumlahBuku){
+        if(daftarBuku[i].judulBuku == cari){
+            found = true;
+            break;
+        }else{
+            i += 1;
+        }
+    }
+    if(!found){
+        cout << "Judul Buku " << cari << " Tidak Tersedia!\n";
+    }else{
+        cout << "Berikut Detil Buku yang ingin dibeli!\n";
+        cout << "Judul : " << daftarBuku[i].judulBuku << '\n';
+        cout << "Harga : " << daftarBuku[i].harga << '\n';
+        cout << "-\n";
+        cout << "Jumlah buku yang ingin dibeli : ";
+        cin >> jmlhbli;
+        totalharga = daftarBuku[i].harga * jmlhbli;
+        cout << "Total Harga : " << totalharga << endl;
+        cout << "-\n";
+        cout << "Silahkan Melakukan Pembayaran\n";
+        cout << "Masukkan Nominal Uang :";
+        cin >> bayar;
+        if(bayar >= totalharga){
+            system("cls");
+            kembalian = bayar - totalharga;
+            cout << "Pembayaran Berhasil\n";
+            cout << "-\n\n";
+            cout << "===============================================\n";
+            cout << "                 Nota Pembelian\n";
+            cout << "-----------------------------------------------\n\n";
+            cout << "                Toko Buku Cihuyy\n";
+            cout << "===============================================\n";
+            cout << "| " <<  left   << setw(20) << "Judul Buku"  
+                 << "| " << setw(10) << "Jumlah" 
+                 << "| " << setw(10) << "Harga"   << "|\n";
+            cout << "-----------------------------------------------\n";
+            cout << "| " <<  left  << setw(20) << daftarBuku[i].judulBuku 
+                 << "| " << setw(10) << jmlhbli 
+                 << "| " << setw(10) << daftarBuku[i].harga << "|\n";
+            cout << "===============================================\n";
+            cout << "| Total Harga         : " << totalharga << endl;
+            cout << "| Uang Dibayarkan     : " << bayar << endl;
+            cout << "| Kembalian           : " << kembalian << endl;
+            cout << "===============================================\n\n";
+            cout << "Terimakasih Telah Membeli Buku\n";
+            // cout << "Apakah anda ingin kembali ke menu utama?(y/t) :";
+            // cin >> balik;
+            // if(balik == 'y'){
+            //     buyerMenu(user);
+            // }
+        } else if(bayar < totalharga){
+            cout << "Maaf Uang Anda Tidak Cukup\n";
+        }
+    }
+    system("pause");
 }
