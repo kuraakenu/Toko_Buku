@@ -1,5 +1,5 @@
 B010 Komet Fiksi_Fantasi Tere_Liye Kepustakaan_Populer_Gramedia 2018 84000 10
-B013 Nebula Fiksi_Petualangan Tere_Liye Kepustakaan_Populer_Gramedia 2019 85000 10
+B018 Nebula Fiksi_Petualangan Tere_Liye Kepustakaan_Populer_Gramedia 2019 85000 10
 B012 Selena Fiksi_Petualangan Tere_Liye Kepustakaan_Gramedia 2020 85000 10
 B014 Si_Putih Fiksi Tere_Liye Kepustakaan_Populer_Gramedia 2020 85000 10
 B008 Bintang Manga Tere_Liye Kepustakaan_Populer_Gramedia 2017 88000 10
@@ -12,6 +12,6 @@ B016 Bibi_Gill Fantasi Tere_Liye Kepustakaan_Populer_Gramedia 2021 102000 10
 B009 Ceros_dan_Batozar Fiksi_Fantasi Tere_Liye Kepustakaan_Populer_Gramedia 2018 104000 10
 B011 Komet_Minor Fantasi_Romantis Tere_Liye Kepustakaan_Populer_Gramedia 2019 105000 10
 B005 Bumi Fiksi Tere_Liye Kepustakaan_Populer_Gramedia 2014 109000 10
-B007 Matahari Fiksi Tere_Liye Kepustakaan_Populer_Gramedia 2016 109000 10
+B007 Matahari Fiksi Tere_Liye Kepustakaan_Populer_Gramedia 2016 109000 15
 B006 Bulan Fiksi Tere_Liye Kepustakaan_Populer_Gramedia 2015 109000 10
-B002 Cantik_Itu_Luka Fiksi Eka_Kurniawan Kepustakaan_Populer_Gramedia 2002 120000 10
+B002 Cantik_Itu_Luka Fiksi Eka_Kurniawan Kepustakaan_Populer_Gramedia 2002 120000 15

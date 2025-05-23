@@ -87,7 +87,6 @@ void fileLoader(int *a){
     string judulTemp, idTemp, authorTemp, penerbitTemp, tahunTemp, genreTemp;
     int i = 0;
     int hargaInt, stokInt;
-
     while(fileLoad >> idTemp >> judulTemp >> genreTemp >> authorTemp >> penerbitTemp >> tahunTemp >> hargaInt >> stokInt){
         judulTemp = UnderscoreToSpace(judulTemp);
         genreTemp = UnderscoreToSpace(genreTemp);
@@ -115,10 +114,10 @@ void adminMenu(string user){
     int pil, newBook, tambahBuku;
     pil = 0;
     
+    int jumlahBukuDiGudang = 0;
     while(pil != 5){
         tambahBuku = 0;
         // Fungsi Memindah File ke Struct Array
-        int jumlahBukuDiGudang = 0;
         fileLoader(&jumlahBukuDiGudang);
 
         system("cls");
@@ -210,30 +209,27 @@ void addBook(int tambahBuku){
 
     cout << "Masukkan Judul Buku: ";
     cin.ignore();
-    getline(cin, daftarBuku[tambahBuku].judulBuku);
-    judulTemp = EditUpLowCase(daftarBuku[tambahBuku].judulBuku);
-    judulTemp = spaceToUnderscore(daftarBuku[tambahBuku].judulBuku);
 
-    /////// ini niatnya, klo dh ada judul bukunya, tinggal nambah stok doang, gw gtw jirlah, next aj
-    // getline(cin, judulTemp);
-    // judulTemp = EditUpLowCase(judulTemp);
+    //anjay bisa, kalo judul ada, tinggal nambah stok
+    getline(cin, judulTemp);
+    judulTemp = EditUpLowCase(judulTemp);
 
-    // for(int i = 0; i < count; i++){
-    //     if(judulTemp == daftarBuku[i].judulBuku){
-    //         cout << "Tambah Stok Buku: ";
-    //         cin >> stokTemp;
-    //         int total = daftarBuku[i].stok + stokTemp;
-    //             fileInput << daftarBuku[i].idBuku << " " << spaceToUnderscore(daftarBuku[i].judulBuku) << " " << spaceToUnderscore(daftarBuku[i].genre) << " " 
-    //             << spaceToUnderscore(daftarBuku[i].authorBuku) << " " << spaceToUnderscore(daftarBuku[i].penerbitBuku)<< " " <<
-    //             daftarBuku[i].tahunTerbit << " " << daftarBuku[i].harga << " " << daftarBuku[i].stok + stokTemp << '\n';
-    //             fileInput.close();
-    //             cout << "Anda Berhasil Menambahkan Stok ke Buku " << daftarBuku[i].judulBuku << " Menjadi " << total << " !";
-    //             system("pause");
-    //             return;
-    //     }else{
-    //         break;
-    //     }
-    // }
+    for(int i = 0; i < count; i++){
+        if(judulTemp == daftarBuku[i].judulBuku){
+            ofstream fileTrunc(fileListBuku, ios::trunc);
+            cout << "Tambah Stok Buku: ";
+            cin >> stokTemp;
+            daftarBuku[i].stok += stokTemp;
+                for(int j = 0; j < count; j++){
+                    fileTrunc << daftarBuku[j].idBuku << ' ' << spaceToUnderscore(daftarBuku[j].judulBuku) << ' ' << spaceToUnderscore(daftarBuku[j].genre) << ' ' << spaceToUnderscore(daftarBuku[j].authorBuku) << ' ' << spaceToUnderscore(daftarBuku[j].penerbitBuku) << ' ' << daftarBuku[j].tahunTerbit << ' ' << daftarBuku[j].harga << ' ' << daftarBuku[j].stok << '\n';
+                }
+                cout << "Anda Berhasil Menambahkan Stok ke Buku " << daftarBuku[i].judulBuku << " Menjadi " << daftarBuku[i].stok << "!\n";
+                system("pause");
+                fileTrunc.close();
+                fileInput.close();
+                return;
+        }
+    }
 
     cout << "Masukkan Genre Buku: ";
     getline(cin, daftarBuku[tambahBuku].genre);
@@ -258,7 +254,7 @@ void addBook(int tambahBuku){
     cout << "Masukkan Jumlah Stok: ";
     cin >> daftarBuku[tambahBuku].stok;
 
-    fileInput << daftarBuku[tambahBuku].idBuku << ' ' << judulTemp << ' ' << genreTemp << ' ' << authorTemp << ' ' << penerbitTemp << ' ' << daftarBuku[tambahBuku].tahunTerbit << ' ' << daftarBuku[tambahBuku].harga << ' ' << daftarBuku[tambahBuku].stok << '\n';
+    fileInput << daftarBuku[tambahBuku].idBuku << ' ' << spaceToUnderscore(judulTemp) << ' ' << genreTemp << ' ' << authorTemp << ' ' << penerbitTemp << ' ' << daftarBuku[tambahBuku].tahunTerbit << ' ' << daftarBuku[tambahBuku].harga << ' ' << daftarBuku[tambahBuku].stok << '\n';
     system("cls");
 
     return addBook(tambahBuku - 1);
