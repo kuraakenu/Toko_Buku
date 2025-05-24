@@ -35,6 +35,7 @@ void fileLoader(int *a);
 void searchBook(int jumlahBuku);
 void sortBook(int jumlahBuku);
 void buybook(int jumlahBuku);
+void removeData(int jumlahBuku);
 //=====================================================
 
 struct buku{
@@ -115,7 +116,7 @@ void adminMenu(string user){
     pil = 0;
     
     int jumlahBukuDiGudang = 0;
-    while(pil != 5){
+    while(pil != 6){
         tambahBuku = 0;
         // Fungsi Memindah File ke Struct Array
         fileLoader(&jumlahBukuDiGudang);
@@ -127,8 +128,8 @@ void adminMenu(string user){
         cout << "[2]. List Buku\n"; // jika file kosong maka tidak tampil
         cout << "[3]. Cari Buku\n"; // jika file kosong maka tidak tampil
         cout << "[4]. Sort Buku\n"; // jika file kosong maka tidak tampil
-        cout << "[?]. Hapus Data\n"; // blm ntar aj, kodingannya udh ada tinggal sesuain
-        cout << "[5]. EXIT\n";
+        cout << "[5]. Hapus Data\n"; // blm ntar aj, kodingannya udh ada tinggal sesuain
+        cout << "[6]. EXIT\n";
         cout << "Input: ";
         cin >> pil;
         switch(pil){
@@ -165,6 +166,15 @@ void adminMenu(string user){
                 }
             break;
             case 5:
+                if(jumlahBukuDiGudang == 0){
+                    cout << "Gudang Kosong!\n";
+                    cout << "Tambahkan Buku Dulu!\n";
+                    system("pause");
+                }else{
+                    removeData(jumlahBukuDiGudang);
+                }
+            break;
+            case 6:
                 exit(0);
             break;
         }
@@ -826,11 +836,6 @@ void buybook(int jumlahBuku){
             cout << "| Kembalian           : " << kembalian << endl;
             cout << "===============================================\n\n";
             cout << "Terimakasih Telah Membeli Buku\n";
-            // cout << "Apakah anda ingin kembali ke menu utama?(y/t) :";
-            // cin >> balik;
-            // if(balik == 'y'){
-            //     buyerMenu(user);
-            // }
             ofstream fileTrunc(fileListBuku, ios::trunc);
             for(int j = 0; j < jumlahBuku; j++){
                     fileTrunc << daftarBuku[j].idBuku << ' ' << spaceToUnderscore(daftarBuku[j].judulBuku) << ' ' << spaceToUnderscore(daftarBuku[j].genre) << ' ' << spaceToUnderscore(daftarBuku[j].authorBuku) << ' ' << spaceToUnderscore(daftarBuku[j].penerbitBuku) << ' ' << daftarBuku[j].tahunTerbit << ' ' << daftarBuku[j].harga << ' ' << daftarBuku[j].stok << '\n';
@@ -843,4 +848,67 @@ void buybook(int jumlahBuku){
         }
     }
     system("pause");
+}
+
+
+void removeData(int jumlahBuku){
+    int pil = 0;
+    bool terhapus = false;
+    string cari;
+    while(pil != 3){
+        system("cls");
+        cout << "[1]. Hapus Menggunakan ID Buku\n";
+        cout << "[2]. Hapus Menggunakan Judul Buku\n";
+        cout << "[3]. BACK\n";
+        cout << "Input: ";
+        cin >> pil;
+        
+        switch(pil){
+            case 1:
+                cout << "Masukkan ID Buku: ";
+                cin >> cari;
+                for(int i = 0; i < jumlahBuku; i++){
+                    if(cari == daftarBuku[i].idBuku){
+                        for(int j = i; j < jumlahBuku - 1; j++){
+                            daftarBuku[j] = daftarBuku[j + 1];
+                        }
+                        jumlahBuku--;
+                        terhapus = true;
+                    }
+                }
+            break;
+            case 2:
+                cout << "Masukkan Judul Buku: ";
+                cin >> cari;
+                for(int i = 0; i < jumlahBuku; i++){
+                    if(cari == daftarBuku[i].judulBuku){
+                        for(int j = i; j < jumlahBuku - 1; j++){
+                            daftarBuku[j] = daftarBuku[j + 1];
+                        }
+                        jumlahBuku--;
+                        terhapus = true;
+                    }
+                }
+            break;
+            case 3:
+                return;
+            default:
+                cout << "Input Salah!\n";
+                system("pause");
+            break;
+        }
+
+        if(terhapus){
+            ofstream fileTrunc(fileListBuku, ios::trunc);
+            for(int j = 0; j < jumlahBuku; j++){
+                fileTrunc << daftarBuku[j].idBuku << ' ' << spaceToUnderscore(daftarBuku[j].judulBuku) << ' ' << spaceToUnderscore(daftarBuku[j].genre) << ' ' << spaceToUnderscore(daftarBuku[j].authorBuku) << ' ' << spaceToUnderscore(daftarBuku[j].penerbitBuku) << ' ' << daftarBuku[j].tahunTerbit << ' ' << daftarBuku[j].harga << ' ' << daftarBuku[j].stok << '\n';
+            }
+            fileTrunc.close();
+            cout << "Buku Telah Terhapus dan Data Telah Tergeser!\n";
+            system("pause");
+        }else{
+            cout << "Buku Tidak Ditemukan!\n";
+            system("pause");
+        }
+    }
 }
