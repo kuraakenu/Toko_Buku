@@ -14,7 +14,7 @@ void cari(int jumlahBuku);
 const int kapasitasBuku = 100;
 
 struct buku{
-    string namaBuku;
+    string judulBuku;
     string penerbitBuku;
     string authorBuku;
     string genre;
@@ -83,7 +83,7 @@ int addBook(int jumlahBuku, int a){
     }
     cout << "Masukkan Nama Buku: ";
     cin.ignore();
-    getline(cin, daftarBuku[jumlahBuku].namaBuku);
+    getline(cin, daftarBuku[jumlahBuku].judulBuku);
     cout << "Masukkan Penerbit Buku: ";
     getline(cin, daftarBuku[jumlahBuku].penerbitBuku);
     cout << "Masukkan Author Buku: ";
@@ -106,7 +106,7 @@ int showBook(int i, int jumlahBuku){
     }
     if (i < jumlahBuku) {
         cout << "----------------------------------------------------------------------------------------------------------------------------------------\n";
-        cout << left << setw(5) << i + 1 << setw(30) << daftarBuku[i].namaBuku << setw(30) << daftarBuku[i].penerbitBuku << setw(30) << daftarBuku[i].authorBuku << setw(30) << daftarBuku[i].tahunTerbit << setw(15) << daftarBuku[i].harga << '\n';
+        cout << left << setw(5) << i + 1 << setw(30) << daftarBuku[i].judulBuku << setw(30) << daftarBuku[i].penerbitBuku << setw(30) << daftarBuku[i].authorBuku << setw(30) << daftarBuku[i].tahunTerbit << setw(15) << daftarBuku[i].harga << '\n';
         return showBook(i + 1, jumlahBuku);
     }
 }
@@ -143,7 +143,7 @@ void cari(int jumlahBuku){
                 cout << "Masukkan Judul Buku : ";
                 getline(cin, cari);
                 for (int i = 0; i < kapasitasBuku; i++){
-                    if(daftarBuku[i].namaBuku == cari){
+                    if(daftarBuku[i].judulBuku == cari){
                         j = i;
                         found = true;
                         break;
@@ -151,7 +151,7 @@ void cari(int jumlahBuku){
                 }
                 if(found){
                     cout << "berikut buku yang data buku yang anda cari" << endl
-                    << "Judul Buku : " << daftarBuku[j].namaBuku << endl
+                    << "Judul Buku : " << daftarBuku[j].judulBuku << endl
                     << "Penerbit Buku : " << daftarBuku[j].penerbitBuku << endl
                     << "Author Buku : " << daftarBuku[j].authorBuku << endl
                     << "Tahun Terbitrbit Buku : " << daftarBuku[j].tahunTerbit << endl
