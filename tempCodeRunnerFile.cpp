@@ -1,1 +1,0 @@
-sudahAda = false;
