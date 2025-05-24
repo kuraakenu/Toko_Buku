@@ -786,6 +786,13 @@ void buybook(int jumlahBuku){
         cout << "-\n";
         cout << "Jumlah buku yang ingin dibeli : ";
         cin >> jmlhbli;
+
+        if(daftarBuku[i].stok < jmlhbli){
+            cout << "Stok Tidak Cukup!\n";
+            system("pause");
+            return;
+        }
+
         totalharga = daftarBuku[i].harga * jmlhbli;
 
         daftarBuku[i].stok = daftarBuku[i].stok - jmlhbli;
