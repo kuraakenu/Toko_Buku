@@ -187,6 +187,13 @@ void adminMenu(string user){
                 mainMenu();
             break;
             case 7:
+                system("cls");
+                cout << "Terimakasih Telah Berkunjung!\n";
+                cout << "  (\\_/)\n";
+                cout << " ( o_o)\n";
+                cout << " / >[  ]>\n";
+                cout << "Jangan Lupa Baca Buku!\n";
+                system("pause");
                 exit(0);
             break;
             default:
@@ -729,6 +736,13 @@ void buyerMenu(string user){
                 mainMenu();
             break;
             case 6:
+                system("cls");
+                cout << "Terimakasih Telah Berkunjung!\n";
+                cout << "  (\\_/)\n";
+                cout << " ( o_o)\n";
+                cout << " / >[  ]>\n";
+                cout << "Jangan Lupa Baca Buku!\n";
+                system("pause");
                 exit(0);
             break;
             default:
@@ -744,7 +758,7 @@ void buyerMenu(string user){
 }
 
 void firstMenu(string &user, int &mode){ // kenapa pake reference user? karena biar ga perlu return dan nilai yang di mainMenu() terganti sementara dengan perubahan user yang ada disini, mode juga gitu
-    int pil;
+    int pil = 0;
     string pasw;
 
     while(true){ //infinite loop, akan berhenti jika ada break, return dan exit
@@ -761,12 +775,19 @@ void firstMenu(string &user, int &mode){ // kenapa pake reference user? karena b
                 cout << "Username: ";
                 cin.ignore();
                 getline(cin, user);
-                if(cekUsername(user)){
-                    cout << "Password: ";
-                    cin >> pasw;
-                    if(registerUsers(user, pasw)){ // klo hasil return true
-                        cout << "Registrasi Berhasil! Silakan Login!\n";
-                        system("pause");
+                if(cin.fail()){
+                    cin.clear();              // Reset status cin kembali ke normal, gampangnya misal tipe data int tapi input string, nah error kan, nah yang di reset itu status errornya jadi normal
+                    cin.ignore(1000, '\n');  // 10000 adalah jumlah karakter yang diabaikan, '\n' sampai ditemukan enter/newline, fungsi cin.ignorenya buat buang karakter di buffer input
+                    cout << "Input Harus Angka!\n";
+                    system("pause");
+                }else{
+                    if(cekUsername(user)){
+                        cout << "Password: ";
+                        cin >> pasw;
+                        if(registerUsers(user, pasw)){ // klo hasil return true
+                            cout << "Registrasi Berhasil! Silakan Login!\n";
+                            system("pause");
+                        }
                     }
                 }
                 break;
@@ -775,18 +796,30 @@ void firstMenu(string &user, int &mode){ // kenapa pake reference user? karena b
                 cout << "Username: ";
                 cin.ignore();
                 getline(cin, user);
-                if(cekUsername(user)){
-                    cout << "Password: ";
-                    cin >> pasw;
-                    if(loginUsers(user, pasw, mode)){ // klo hasil return true
-                        cout << "Login Berhasil!\n";
-                        system("pause");
-                        return;
+                if(cin.fail()){
+                    cin.clear();              // Reset status cin kembali ke normal, gampangnya misal tipe data int tapi input string, nah error kan, nah yang di reset itu status errornya jadi normal
+                    cin.ignore(1000, '\n');  // 10000 adalah jumlah karakter yang diabaikan, '\n' sampai ditemukan enter/newline, fungsi cin.ignorenya buat buang karakter di buffer input
+                    cout << "Input Harus Angka!\n";
+                    system("pause");
+                }else{
+                    if(cekUsername(user)){
+                        cout << "Password: ";
+                        cin >> pasw;
+                        if(loginUsers(user, pasw, mode)){ // klo hasil return true
+                            cout << "Login Berhasil!\n";
+                            system("pause");
+                            return;
+                        }
                     }
                 }
             break;
             case 3:
+                system("cls");
                 cout << "Terimakasih Telah Berkunjung!\n";
+                cout << "  (\\_/)\n";
+                cout << " ( o_o)\n";
+                cout << " / >[  ]>\n";
+                cout << "Jangan Lupa Baca Buku!\n";
                 system("pause");
                 exit(0);
             break;
