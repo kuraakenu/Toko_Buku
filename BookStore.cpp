@@ -26,6 +26,7 @@ void buyerMenu(string user);
 // Function Login Register ============================
 bool registerUsers(string &user, string pasw);
 bool loginUsers(string &user, string pasw, int &mode);
+bool cekUsername(string user);
 // ====================================================
 
 // Function di dalam Menu =============================
@@ -123,7 +124,7 @@ void adminMenu(string user){
 
         system("cls");
         cout << "Hai Admin "<< user << "! \n";
-        cout << "Selamat Datang di Dashboard GaraMedia Online\n";
+        cout << "Selamat Datang di Dashboard Cihuy Online\n";
         cout << "[1]. Tambah Buku\n";
         cout << "[2]. List Buku\n"; // jika file kosong maka tidak tampil
         cout << "[3]. Cari Buku\n"; // jika file kosong maka tidak tampil
@@ -483,31 +484,160 @@ void sortBook(int jumlahBuku){
     }
 }
 
+
+void removeData(int jumlahBuku){
+    int pil = 0;
+    bool terhapus = false;
+    string cari;
+    while(pil != 3){
+        system("cls");
+        cout << "[1]. Hapus Menggunakan ID Buku\n";
+        cout << "[2]. Hapus Menggunakan Judul Buku\n";
+        cout << "[3]. BACK\n";
+        cout << "Input: ";
+        cin >> pil;
+        
+        switch(pil){
+            case 1:
+                cout << "Masukkan ID Buku: ";
+                cin >> cari;
+                for(int i = 0; i < jumlahBuku; i++){
+                    if(cari == daftarBuku[i].idBuku){
+                        for(int j = i; j < jumlahBuku - 1; j++){
+                            daftarBuku[j] = daftarBuku[j + 1];
+                        }
+                        jumlahBuku--;
+                        terhapus = true;
+                    }
+                }
+            break;
+            case 2:
+                cout << "Masukkan Judul Buku: ";
+                cin >> cari;
+                for(int i = 0; i < jumlahBuku; i++){
+                    if(cari == daftarBuku[i].judulBuku){
+                        for(int j = i; j < jumlahBuku - 1; j++){
+                            daftarBuku[j] = daftarBuku[j + 1];
+                        }
+                        jumlahBuku--;
+                        terhapus = true;
+                    }
+                }
+            break;
+            case 3:
+                return;
+            default:
+                cout << "Input Salah!\n";
+                system("pause");
+            break;
+        }
+
+        if(terhapus){
+            ofstream fileTrunc(fileListBuku, ios::trunc);
+            for(int j = 0; j < jumlahBuku; j++){
+                fileTrunc << daftarBuku[j].idBuku << ' ' << spaceToUnderscore(daftarBuku[j].judulBuku) << ' ' << spaceToUnderscore(daftarBuku[j].genre) << ' ' << spaceToUnderscore(daftarBuku[j].authorBuku) << ' ' << spaceToUnderscore(daftarBuku[j].penerbitBuku) << ' ' << daftarBuku[j].tahunTerbit << ' ' << daftarBuku[j].harga << ' ' << daftarBuku[j].stok << '\n';
+            }
+            fileTrunc.close();
+            cout << "Buku Telah Terhapus dan Data Telah Tergeser!\n";
+            system("pause");
+        }else{
+            cout << "Buku Tidak Ditemukan!\n";
+            system("pause");
+        }
+    }
+}
+
+void buybook(int jumlahBuku){
+    string cari; char balik;
+    int i, j, bayar, kembalian, jmlhbli, totalharga;
+    bool found = false, lanjut;
+    system("cls");
+    cout << "Masukkan judul buku : ";
+    cin.ignore();
+    getline(cin, cari);
+    cari = EditUpLowCase(cari);
+    i = 0;
+    while(i <= jumlahBuku){
+        if(daftarBuku[i].judulBuku == cari){
+            found = true;
+            break;
+        }else{
+            i += 1;
+        }
+    }
+    if(!found){
+        cout << "Judul Buku " << cari << " Tidak Tersedia!\n";
+    }else{
+        cout << "Berikut Detil Buku yang ingin dibeli!\n";
+        cout << "Judul : " << daftarBuku[i].judulBuku << '\n';
+        cout << "Harga : " << daftarBuku[i].harga << '\n';
+        cout << "Stok  : " << daftarBuku[i]. stok << '\n';
+        cout << "-\n";
+        cout << "Jumlah buku yang ingin dibeli : ";
+        cin >> jmlhbli;
+
+        if(daftarBuku[i].stok < jmlhbli){
+            cout << "Stok Tidak Cukup!\n";
+            system("pause");
+            return;
+        }
+
+        totalharga = daftarBuku[i].harga * jmlhbli;
+
+        daftarBuku[i].stok = daftarBuku[i].stok - jmlhbli;
+
+        cout << "Total Harga : " << totalharga << endl;
+        cout << "-\n";
+        cout << "Silahkan Melakukan Pembayaran\n";
+        cout << "Masukkan Nominal Uang :";
+        cin >> bayar;
+
+        if(bayar >= totalharga){
+            system("cls");
+            kembalian = bayar - totalharga;
+            cout << "Pembayaran Berhasil\n";
+            cout << "-\n\n";
+            cout << "===============================================\n";
+            cout << "                 Nota Pembelian\n";
+            cout << "-----------------------------------------------\n\n";
+            cout << "                Toko Buku Cihuyy\n";
+            cout << "===============================================\n";
+            cout << "| " <<  left   << setw(20) << "Judul Buku"  
+                 << "| " << setw(10) << "Jumlah" 
+                 << "| " << setw(10) << "Harga"   << "|\n";
+            cout << "-----------------------------------------------\n";
+            cout << "| " <<  left  << setw(20) << daftarBuku[i].judulBuku 
+                 << "| " << setw(10) << jmlhbli 
+                 << "| " << setw(10) << daftarBuku[i].harga << "|\n";
+            cout << "===============================================\n";
+            cout << "| Total Harga         : " << totalharga << endl;
+            cout << "| Uang Dibayarkan     : " << bayar << endl;
+            cout << "| Kembalian           : " << kembalian << endl;
+            cout << "===============================================\n\n";
+            cout << "Terimakasih Telah Membeli Buku\n";
+            ofstream fileTrunc(fileListBuku, ios::trunc);
+            for(int j = 0; j < jumlahBuku; j++){
+                    fileTrunc << daftarBuku[j].idBuku << ' ' << spaceToUnderscore(daftarBuku[j].judulBuku) << ' ' << spaceToUnderscore(daftarBuku[j].genre) << ' ' << spaceToUnderscore(daftarBuku[j].authorBuku) << ' ' << spaceToUnderscore(daftarBuku[j].penerbitBuku) << ' ' << daftarBuku[j].tahunTerbit << ' ' << daftarBuku[j].harga << ' ' << daftarBuku[j].stok << '\n';
+                }
+            fileTrunc.close();
+
+        } else if(bayar < totalharga){
+            cout << "Maaf Uang Anda Tidak Cukup\n";
+            cout << "Silahkan mengulang\n";
+        }
+    }
+    system("pause");
+}
+
 // Menu dari POV Buyer
 void buyerMenu(string user){
-    cout << "Hai "<< user << "! \n";
-    cout << "Selamat Datang di GaraMedia Online\n";
-    cout << "[1]. Pinjam Buku\n"; // beli buku dibuat ada struknya si yak, jadi pas user udh cekout brp buku, insert duitnya, nanti muncul struknya
-    cout << "[2]. List Buku\n"; // jadiin 1 fungsi aja ama yang versi adminnya, sama soalnya tinggal panggil doang
-    cout << "[3]. Cari Buku\n"; // jadiin 1 fungsi aja ama yang versi adminnya, sama soalnya tinggal panggil doang, kasih kondisi tambahan deh, abis dicari, ada menu beli, kek gini
-                                // =================================================
-                                // Judul Buku   : Buku A
-                                // Genre        : Seegs
-                                // Penulis      : Wahyu
-                                // Penerbit     : blabal
-                                // Tahun Terbit : 2424
-                                // =================================================
-                                // menu beli // ini ngarah ke fungsi menu Beli Buku
-                                // menu back
-    cout << "[4]. EXIT\n";
-    cout << "Input: ";
     int pil = 0;
+    int jumlahBukuDiToko = 0;
     while(pil != 5){
         system("cls");
-        int jumlahBukuDiToko = 0;
         fileLoader(&jumlahBukuDiToko);
         cout << "Hai "<< user << "! \n";
-        cout << "Selamat Datang di GaraMedia Online\n";
+        cout << "Selamat Datang di Toko Buku Cihuy\n";
         cout << "[1]. Beli Buku\n"; 
         cout << "[2]. List Buku\n"; 
         cout << "[3]. Cari Buku\n"; 
@@ -566,9 +696,9 @@ void firstMenu(string &user, int &mode){ // kenapa pake reference user? karena b
     int pil;
     string pasw;
 
-    while(true){
+    while(true){ //infinite loop, akan berhenti jika ada break, return dan exit
         system("cls");
-        cout << "|| Selamat Datang di GaraMedia ||\n";
+        cout << "|| Selamat Datang di Toko Buku Cihuy ||\n";
         cout << "[1]. Register\n";
         cout << "[2]. Login\n";
         cout << "[3]. EXIT\n";
@@ -578,24 +708,30 @@ void firstMenu(string &user, int &mode){ // kenapa pake reference user? karena b
         switch(pil){
             case 1:
                 cout << "Username: ";
-                cin >> user;
-                cout << "Password: ";
-                cin >> pasw;
-                if(registerUsers(user, pasw)){ // klo hasil return true
-                    cout << "Registrasi Berhasil! Silakan Login!\n";
-                    system("pause");
+                cin.ignore();
+                getline(cin, user);
+                if(cekUsername(user)){
+                    cout << "Password: ";
+                    cin >> pasw;
+                    if(registerUsers(user, pasw)){ // klo hasil return true
+                        cout << "Registrasi Berhasil! Silakan Login!\n";
+                        system("pause");
+                    }
                 }
                 break;
                 
             case 2:
                 cout << "Username: ";
-                cin >> user;
-                cout << "Password: ";
-                cin >> pasw;
-                if(loginUsers(user, pasw, mode)){ // klo hasil return true
-                    cout << "Login Berhasil!\n";
-                    system("pause");
-                    return;
+                cin.ignore();
+                getline(cin, user);
+                if(cekUsername(user)){
+                    cout << "Password: ";
+                    cin >> pasw;
+                    if(loginUsers(user, pasw, mode)){ // klo hasil return true
+                        cout << "Login Berhasil!\n";
+                        system("pause");
+                        return;
+                    }
                 }
             break;
             case 3:
@@ -606,6 +742,7 @@ void firstMenu(string &user, int &mode){ // kenapa pake reference user? karena b
             default:
                 cout << "Input Salah!\n";
                 system("pause");
+            break;
         }
     }
 }
@@ -768,147 +905,22 @@ string EditUpLowCase(string str){
     return str;
 }
 
-void buybook(int jumlahBuku){
-    string cari; char balik;
-    int i, j, bayar, kembalian, jmlhbli, totalharga;
-    bool found = false, lanjut;
-    system("cls");
-    cout << "Masukkan judul buku : ";
-    cin.ignore();
-    getline(cin, cari);
-    cari = EditUpLowCase(cari);
-    i = 0;
-    while(i <= jumlahBuku){
-        if(daftarBuku[i].judulBuku == cari){
-            found = true;
+bool cekUsername(string user){
+
+    bool space = false;
+
+    for(char &up : user){
+        if(isspace(up)){
+            space = true;
             break;
-        }else{
-            i += 1;
         }
     }
-    if(!found){
-        cout << "Judul Buku " << cari << " Tidak Tersedia!\n";
+
+    if(space){
+        cout << "Username Tidak Boleh Ada Spasi!\n";
+        system("pause");
+        return false;
     }else{
-        cout << "Berikut Detil Buku yang ingin dibeli!\n";
-        cout << "Judul : " << daftarBuku[i].judulBuku << '\n';
-        cout << "Harga : " << daftarBuku[i].harga << '\n';
-        cout << "Stok  : " << daftarBuku[i]. stok << '\n';
-        cout << "-\n";
-        cout << "Jumlah buku yang ingin dibeli : ";
-        cin >> jmlhbli;
-
-        if(daftarBuku[i].stok < jmlhbli){
-            cout << "Stok Tidak Cukup!\n";
-            system("pause");
-            return;
-        }
-
-        totalharga = daftarBuku[i].harga * jmlhbli;
-
-        daftarBuku[i].stok = daftarBuku[i].stok - jmlhbli;
-
-        cout << "Total Harga : " << totalharga << endl;
-        cout << "-\n";
-        cout << "Silahkan Melakukan Pembayaran\n";
-        cout << "Masukkan Nominal Uang :";
-        cin >> bayar;
-
-        if(bayar >= totalharga){
-            system("cls");
-            kembalian = bayar - totalharga;
-            cout << "Pembayaran Berhasil\n";
-            cout << "-\n\n";
-            cout << "===============================================\n";
-            cout << "                 Nota Pembelian\n";
-            cout << "-----------------------------------------------\n\n";
-            cout << "                Toko Buku Cihuyy\n";
-            cout << "===============================================\n";
-            cout << "| " <<  left   << setw(20) << "Judul Buku"  
-                 << "| " << setw(10) << "Jumlah" 
-                 << "| " << setw(10) << "Harga"   << "|\n";
-            cout << "-----------------------------------------------\n";
-            cout << "| " <<  left  << setw(20) << daftarBuku[i].judulBuku 
-                 << "| " << setw(10) << jmlhbli 
-                 << "| " << setw(10) << daftarBuku[i].harga << "|\n";
-            cout << "===============================================\n";
-            cout << "| Total Harga         : " << totalharga << endl;
-            cout << "| Uang Dibayarkan     : " << bayar << endl;
-            cout << "| Kembalian           : " << kembalian << endl;
-            cout << "===============================================\n\n";
-            cout << "Terimakasih Telah Membeli Buku\n";
-            ofstream fileTrunc(fileListBuku, ios::trunc);
-            for(int j = 0; j < jumlahBuku; j++){
-                    fileTrunc << daftarBuku[j].idBuku << ' ' << spaceToUnderscore(daftarBuku[j].judulBuku) << ' ' << spaceToUnderscore(daftarBuku[j].genre) << ' ' << spaceToUnderscore(daftarBuku[j].authorBuku) << ' ' << spaceToUnderscore(daftarBuku[j].penerbitBuku) << ' ' << daftarBuku[j].tahunTerbit << ' ' << daftarBuku[j].harga << ' ' << daftarBuku[j].stok << '\n';
-                }
-            fileTrunc.close();
-
-        } else if(bayar < totalharga){
-            cout << "Maaf Uang Anda Tidak Cukup\n";
-            cout << "Silahkan mengulang\n";
-        }
-    }
-    system("pause");
-}
-
-
-void removeData(int jumlahBuku){
-    int pil = 0;
-    bool terhapus = false;
-    string cari;
-    while(pil != 3){
-        system("cls");
-        cout << "[1]. Hapus Menggunakan ID Buku\n";
-        cout << "[2]. Hapus Menggunakan Judul Buku\n";
-        cout << "[3]. BACK\n";
-        cout << "Input: ";
-        cin >> pil;
-        
-        switch(pil){
-            case 1:
-                cout << "Masukkan ID Buku: ";
-                cin >> cari;
-                for(int i = 0; i < jumlahBuku; i++){
-                    if(cari == daftarBuku[i].idBuku){
-                        for(int j = i; j < jumlahBuku - 1; j++){
-                            daftarBuku[j] = daftarBuku[j + 1];
-                        }
-                        jumlahBuku--;
-                        terhapus = true;
-                    }
-                }
-            break;
-            case 2:
-                cout << "Masukkan Judul Buku: ";
-                cin >> cari;
-                for(int i = 0; i < jumlahBuku; i++){
-                    if(cari == daftarBuku[i].judulBuku){
-                        for(int j = i; j < jumlahBuku - 1; j++){
-                            daftarBuku[j] = daftarBuku[j + 1];
-                        }
-                        jumlahBuku--;
-                        terhapus = true;
-                    }
-                }
-            break;
-            case 3:
-                return;
-            default:
-                cout << "Input Salah!\n";
-                system("pause");
-            break;
-        }
-
-        if(terhapus){
-            ofstream fileTrunc(fileListBuku, ios::trunc);
-            for(int j = 0; j < jumlahBuku; j++){
-                fileTrunc << daftarBuku[j].idBuku << ' ' << spaceToUnderscore(daftarBuku[j].judulBuku) << ' ' << spaceToUnderscore(daftarBuku[j].genre) << ' ' << spaceToUnderscore(daftarBuku[j].authorBuku) << ' ' << spaceToUnderscore(daftarBuku[j].penerbitBuku) << ' ' << daftarBuku[j].tahunTerbit << ' ' << daftarBuku[j].harga << ' ' << daftarBuku[j].stok << '\n';
-            }
-            fileTrunc.close();
-            cout << "Buku Telah Terhapus dan Data Telah Tergeser!\n";
-            system("pause");
-        }else{
-            cout << "Buku Tidak Ditemukan!\n";
-            system("pause");
-        }
+        return true;
     }
 }
