@@ -472,7 +472,7 @@ void sortBook(int jumlahBuku){
             case 1: // Bubble Sort
                 for(int i = 0; i < jumlahBuku - 1; i++){
                     for(int j = 0; j < jumlahBuku - 1 - i; j++){
-                        if(daftarBuku[j].judulBuku > daftarBuku[j+1].judulBuku){
+                        if(daftarBuku[j].judulBuku > daftarBuku[j+1].judulBuku){ 
                             buku temp = daftarBuku[j];
                             daftarBuku[j] = daftarBuku[j+1];
                             daftarBuku[j+1] = temp;
@@ -484,10 +484,10 @@ void sortBook(int jumlahBuku){
             case 2: // Straight Selection Sort
                 for(int i = 0; i < jumlahBuku; i++){
                     for(int j = i + 1; j < jumlahBuku; j++){
-                        if(daftarBuku[i].harga > daftarBuku[j].harga){
-                            buku temp = daftarBuku[i];
-                            daftarBuku[i] = daftarBuku[j];
-                            daftarBuku[j] = temp;
+                        if(daftarBuku[i].harga > daftarBuku[j].harga){ // cek apakah index i(patokan) lebih besar dari index j(yang diganti2 klo gamasuk kondisi)
+                            buku temp = daftarBuku[i]; // jika iya, data struct array index i disimpan di variabel temp nilainya 2
+                            daftarBuku[i] = daftarBuku[j]; // lalu digantikan dengan index j yang nilainya lebih kecil, j nilainya 1
+                            daftarBuku[j] = temp; // index j yang udah dipindah ke index i, diisi sama temp data struct array index i yang tersimpan di temp, nilainya 2
                         }
                     }
                 }
@@ -543,10 +543,10 @@ void removeData(int jumlahBuku){
             case 1:
                 cout << "Masukkan ID Buku: ";
                 cin >> cari;
-                for(int i = 0; i < jumlahBuku; i++){
+                for(int i = 0; i < jumlahBuku; i++){ // loop pertama cari id yang cocok
                     if(cari == daftarBuku[i].idBuku){
-                        for(int j = i; j < jumlahBuku - 1; j++){
-                            daftarBuku[j] = daftarBuku[j + 1];
+                        for(int j = i; j < jumlahBuku - 1; j++){ // loop kedua untuk menggeser index array setelah index id buku yg ingin dihapus
+                            daftarBuku[j] = daftarBuku[j + 1]; // menggeser index beserta isinya, jd dari 2, yg mau di hapus ada di 1, 1 ini ditimpa isinya sama index 2, index 2 jadi index 1
                         }
                         jumlahBuku--;
                         terhapus = true;
@@ -556,10 +556,10 @@ void removeData(int jumlahBuku){
             case 2:
                 cout << "Masukkan Judul Buku: ";
                 cin >> cari;
-                for(int i = 0; i < jumlahBuku; i++){
-                    if(cari == daftarBuku[i].judulBuku){
-                        for(int j = i; j < jumlahBuku - 1; j++){
-                            daftarBuku[j] = daftarBuku[j + 1];
+                for(int i = 0; i < jumlahBuku; i++){ // loop pertama cari judul yang cocok
+                    if(cari == daftarBuku[i].judulBuku){ 
+                        for(int j = i; j < jumlahBuku - 1; j++){// loop kedua untuk menggeser index array setelah index id buku yg ingin dihapus
+                            daftarBuku[j] = daftarBuku[j + 1]; // menggeser index beserta isinya, jd dari 2, yg mau di hapus ada di 1, 1 ini ditimpa isinya sama index 2, index 2 jadi index 1
                         }
                         jumlahBuku--;
                         terhapus = true;
@@ -599,7 +599,7 @@ void buybook(int jumlahBuku){
     int i, j, bayar, kembalian, jmlhbli, totalharga;
     bool found = false, lanjut;
     system("cls");
-    cout << "Masukkan judul buku : ";
+    cout << "Masukkan Judul Buku: ";
     cin.ignore();
     getline(cin, cari);
     cari = EditUpLowCase(cari);
@@ -615,12 +615,12 @@ void buybook(int jumlahBuku){
     if(!found){
         cout << "Judul Buku " << cari << " Tidak Tersedia!\n";
     }else{
-        cout << "Berikut Detil Buku yang ingin dibeli!\n";
+        cout << "Berikut Detil Buku Yang Ingin Dibeli!\n";
         cout << "Judul : " << daftarBuku[i].judulBuku << '\n';
         cout << "Harga : " << daftarBuku[i].harga << '\n';
         cout << "Stok  : " << daftarBuku[i]. stok << '\n';
         cout << "-\n";
-        cout << "Jumlah buku yang ingin dibeli : ";
+        cout << "Jumlah Buku Yang Ingin Dibeli: ";
         cin >> jmlhbli;
 
         if(daftarBuku[i].stok < jmlhbli){
@@ -633,10 +633,10 @@ void buybook(int jumlahBuku){
 
         daftarBuku[i].stok = daftarBuku[i].stok - jmlhbli;
 
-        cout << "Total Harga : " << totalharga << endl;
+        cout << "Total Harga: " << totalharga << endl;
         cout << "-\n";
-        cout << "Silahkan Melakukan Pembayaran\n";
-        cout << "Masukkan Nominal Uang :";
+        cout << "Silakan Melakukan Pembayaran!\n";
+        cout << "Masukkan Nominal Uang:";
         cin >> bayar;
 
         if(bayar >= totalharga){
@@ -647,7 +647,7 @@ void buybook(int jumlahBuku){
             cout << "===============================================\n";
             cout << "                 Nota Pembelian\n";
             cout << "-----------------------------------------------\n\n";
-            cout << "                Toko Buku Cihuyy\n";
+            cout << "                Toko Buku Cihuy\n";
             cout << "===============================================\n";
             cout << "| " <<  left   << setw(20) << "Judul Buku"  
                  << "| " << setw(10) << "Jumlah" 
@@ -661,7 +661,7 @@ void buybook(int jumlahBuku){
             cout << "| Uang Dibayarkan     : " << bayar << endl;
             cout << "| Kembalian           : " << kembalian << endl;
             cout << "===============================================\n\n";
-            cout << "Terimakasih Telah Membeli Buku\n";
+            cout << "Terimakasih Telah Membeli Buku!\n";
             ofstream fileTrunc(fileListBuku, ios::trunc);
             for(int j = 0; j < jumlahBuku; j++){
                     fileTrunc << daftarBuku[j].idBuku << ' ' << spaceToUnderscore(daftarBuku[j].judulBuku) << ' ' << spaceToUnderscore(daftarBuku[j].genre) << ' ' << spaceToUnderscore(daftarBuku[j].authorBuku) << ' ' << spaceToUnderscore(daftarBuku[j].penerbitBuku) << ' ' << daftarBuku[j].tahunTerbit << ' ' << daftarBuku[j].harga << ' ' << daftarBuku[j].stok << '\n';
@@ -669,8 +669,8 @@ void buybook(int jumlahBuku){
             fileTrunc.close();
 
         } else if(bayar < totalharga){
-            cout << "Maaf Uang Anda Tidak Cukup\n";
-            cout << "Silahkan mengulang\n";
+            cout << "Maaf Uang Anda Tidak Cukup!\n";
+            cout << "Silakan Mengulang!\n";
         }
     }
     system("pause");
@@ -975,10 +975,12 @@ string UnderscoreToSpace(string str){
 string EditUpLowCase(string str){
     bool newWord = true; // apakah awal kata baru
 
+    // : itu syntax range-based loop untuk melakukan perulangan langsung terhadap seluruh char dari user, up disitu adalah satu karakter dari user yang diakses dalam satu iterasi loop, loop pertama u, kedua s dst
     for(char &lw : str){ // loop mengubah semua char di str menjadi kecil , // : adalah range-based loop, melakukan pengulangan untuk setiap elemen str
         lw = tolower(lw); // mengubah char yang ada di variabel lw menjadi kecil
     }
 
+    // : itu syntax range-based loop untuk melakukan perulangan langsung terhadap seluruh char dari user, up disitu adalah satu karakter dari user yang diakses dalam satu iterasi loop, loop pertama u, kedua s dst
     for(char &up : str){
         if(isspace(up)){ // cek apakah char tersebut merupakan spasi, jika iya, next char bakal kapital
             newWord = true; // setelah spasi adalah awal kata baru
@@ -995,14 +997,15 @@ bool cekUsername(string user){
 
     bool space = false;
 
-    for(char &up : user){
-        if(isspace(up)){
-            space = true;
+    // : itu syntax range-based loop untuk melakukan perulangan langsung terhadap seluruh char dari user, up disitu adalah satu karakter dari user yang diakses dalam satu iterasi loop, loop pertama u, kedua s dst
+    for(char &up : user){ // cek apakah char tersebut merupakan spasi, jika iya, next char bakal kapital
+        if(isspace(up)){ // cek apakah char tersebut merupakan spasi
+            space = true;// jika iya, true
             break;
         }
     }
 
-    if(space){
+    if(space){ // jika true
         cout << "Username Tidak Boleh Ada Spasi!\n";
         system("pause");
         return false;
