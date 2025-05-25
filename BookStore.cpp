@@ -124,13 +124,13 @@ void adminMenu(string user){
 
         system("cls");
         cout << "Hai Admin "<< user << "! \n";
-        cout << "Selamat Datang di Dashboard Cihuy Online\n";
+        cout << "Selamat Datang di Dashboard Toko Buku Cihuy\n";
         cout << "[1]. Tambah Buku\n";
         cout << "[2]. List Buku\n"; // jika file kosong maka tidak tampil
         cout << "[3]. Cari Buku\n"; // jika file kosong maka tidak tampil
         cout << "[4]. Sort Buku\n"; // jika file kosong maka tidak tampil
         cout << "[5]. Hapus Data\n"; 
-        cout << "[6]. LOGOUT\n";
+        cout << "[6]. LOG OUT\n";
         cout << "[7]. EXIT\n";
         cout << "Input: ";
         cin >> pil;
@@ -184,6 +184,8 @@ void adminMenu(string user){
                 }
             break;
             case 6:
+                cout << "Anda Akan Diarahkan Ke Menu Login/Register!\n";
+                system("pause");
                 mainMenu();
             break;
             case 7:
@@ -689,7 +691,7 @@ void buyerMenu(string user){
         cout << "[2]. List Buku\n"; 
         cout << "[3]. Cari Buku\n"; 
         cout << "[4]. Sort Buku\n";
-        cout << "[5]. LOGOUT\n";
+        cout << "[5]. LOG OUT\n";
         cout << "[6]. EXIT\n";
         cout << "Input: ";
         cin >> pil;
@@ -733,6 +735,8 @@ void buyerMenu(string user){
                 }
             break;
             case 5:
+                cout << "Anda Akan Diarahkan Ke Menu Login/Register!\n";
+                system("pause");
                 mainMenu();
             break;
             case 6:
@@ -964,7 +968,7 @@ string UnderscoreToSpace(string str){
     string temp = str;
 
     for(int i = 0; i < str.length(); i++){ // loop nya i < panjang str
-        if(temp[i] == '_'){ // cek dlu ada space atau ga 
+        if(temp[i] == '_'){ // cek dlu ada space atau ga
             temp.replace(i,1,1,' '); // klo ada, direplace sesuai urutan underscore di char tempnya, 1 pertama itu jumlah char yg di hapus, 1 kedua itu banyak char si ' ' buat gantiin yang diapus
         }
     }
@@ -975,12 +979,12 @@ string UnderscoreToSpace(string str){
 string EditUpLowCase(string str){
     bool newWord = true; // apakah awal kata baru
 
-    // : itu syntax range-based loop untuk melakukan perulangan langsung terhadap seluruh char dari user, up disitu adalah satu karakter dari user yang diakses dalam satu iterasi loop, loop pertama u, kedua s dst
-    for(char &lw : str){ // loop mengubah semua char di str menjadi kecil , // : adalah range-based loop, melakukan pengulangan untuk setiap elemen str
+    // : itu syntax range-based loop untuk melakukan perulangan langsung terhadap seluruh char dari str, up disitu adalah satu karakter dari str yang diakses dalam satu iterasi loop, loop pertama s, kedua t dst
+    for(char &lw : str){ // loop mengubah semua char di str menjadi kecil ,
         lw = tolower(lw); // mengubah char yang ada di variabel lw menjadi kecil
     }
 
-    // : itu syntax range-based loop untuk melakukan perulangan langsung terhadap seluruh char dari user, up disitu adalah satu karakter dari user yang diakses dalam satu iterasi loop, loop pertama u, kedua s dst
+    // : itu syntax range-based loop untuk melakukan perulangan langsung terhadap seluruh char dari str, up disitu adalah satu karakter dari str yang diakses dalam satu iterasi loop, loop pertama s, kedua t dst
     for(char &up : str){
         if(isspace(up)){ // cek apakah char tersebut merupakan spasi, jika iya, next char bakal kapital
             newWord = true; // setelah spasi adalah awal kata baru
