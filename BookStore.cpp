@@ -30,7 +30,7 @@ bool cekUsername(string user);
 // ====================================================
 
 // Function di dalam Menu =============================
-void addBook(int tambahBuku);
+void addBook(int tambahBuku, int jumlahBuku);
 void listBook(int jumlahBuku);
 void fileLoader(int *a);
 void searchBook(int jumlahBuku);
@@ -117,7 +117,7 @@ void adminMenu(string user){
     pil = 0;
     
     int jumlahBukuDiGudang = 0;
-    while(pil != 6){
+    while(pil != 7){
         tambahBuku = 0;
         // Fungsi Memindah File ke Struct Array
         fileLoader(&jumlahBukuDiGudang);
@@ -129,15 +129,23 @@ void adminMenu(string user){
         cout << "[2]. List Buku\n"; // jika file kosong maka tidak tampil
         cout << "[3]. Cari Buku\n"; // jika file kosong maka tidak tampil
         cout << "[4]. Sort Buku\n"; // jika file kosong maka tidak tampil
-        cout << "[5]. Hapus Data\n"; // blm ntar aj, kodingannya udh ada tinggal sesuain
-        cout << "[6]. EXIT\n";
+        cout << "[5]. Hapus Data\n"; 
+        cout << "[6]. LOGOUT\n";
+        cout << "[7]. EXIT\n";
         cout << "Input: ";
         cin >> pil;
         switch(pil){
             case 1:
                 cout << "Jumlah Buku Yang Ingin Ditambahkan: ";
                 cin >> tambahBuku;
-                addBook(tambahBuku);
+                if(cin.fail()){
+                    cin.clear();              // Reset status cin kembali ke normal, gampangnya misal tipe data int tapi input string, nah error kan, nah yang di reset itu status errornya jadi normal
+                    cin.ignore(1000, '\n');  // 10000 adalah jumlah karakter yang diabaikan, '\n' sampai ditemukan enter/newline, fungsi cin.ignorenya buat buang karakter di buffer input
+                    cout << "Input Harus Angka!\n";
+                    system("pause");
+                }else{
+                    addBook(tambahBuku, jumlahBukuDiGudang);
+                }
             break;
             case 2:
                 if(jumlahBukuDiGudang == 0){
@@ -176,19 +184,26 @@ void adminMenu(string user){
                 }
             break;
             case 6:
+                mainMenu();
+            break;
+            case 7:
                 exit(0);
+            break;
+            default:
+                cin.clear();              // Reset status cin kembali ke normal, gampangnya misal tipe data int tapi input string, nah error kan, nah yang di reset itu status errornya jadi normal
+                cin.ignore(1000, '\n');  // 10000 adalah jumlah karakter yang diabaikan, '\n' sampai ditemukan enter/newline, fungsi cin.ignorenya buat buang karakter di buffer input
+                cout << "Input Salah!\n";
+                system("pause");
             break;
         }
     }
 }
 
 // Menambahkan Buku Menggunakan Rekursi
-void addBook(int tambahBuku){
+void addBook(int tambahBuku, int jumlahBuku){
     ofstream fileInput(fileListBuku, ios::app);
     string judulTemp, penerbitTemp, authorTemp, genreTemp, lineCheck, idTemp;
     int stokTemp;
-
-    int count = 0;
 
     // Cek Apakah file ada atau tidak / terbuka atau tidak
     if(!fileInput.is_open()){
@@ -196,20 +211,20 @@ void addBook(int tambahBuku){
         system("pause");
         return;
     }
-    
-    ifstream fileCheck(fileListBuku);
-    while(getline(fileCheck, lineCheck)){ // cek ada brp buku di file
-        count += 1;
-    }
-    fileCheck.close();
 
     // karna rekursi, tambahBuku akan terus berkurang sampai 0
     if(tambahBuku == 0){
         fileInput.close();
+        int count = 0;
+        ifstream fileCount(fileListBuku);
+        while(getline(fileCount, lineCheck)){ // cara kerjanya, getline akan baca kata dari fileCount sampai ke baris akhir, kalau ketemu newline di linecheck=0 maka linecheck +1, baca baris selanjutnya di linecheck = 1 dan seterusnya
+            count++;
+        }
+        fileCount.close();
 
         system("cls");
         cout << "Selesai! Anda Baru Saja Menambahkan Buku Kedalam Gudang!\n";
-        cout << "Di Gudang Sekarang Berisi " << count + 1 << " Judul Buku!\n"; // + 1 karena yang 
+        cout << "Di Gudang Sekarang Berisi " << count + 1 << " Judul Buku!\n"; // + 1 karena count masih menghitung file yang sblm masuk ke rekursi, setelah masuk karna blm return atau masuk rekursi lagi, datanya blm ke update 
         system("pause");
         return;
     }
@@ -221,7 +236,7 @@ void addBook(int tambahBuku){
         cout << "Masukkan ID Buku: ";
         cin >> idTemp;
     
-        for(int i = 0; i < count; i++){
+        for(int i = 0; i < jumlahBuku; i++){
             if(daftarBuku[i].idBuku == idTemp){
                 sudahAda = true;
             }
@@ -243,13 +258,13 @@ void addBook(int tambahBuku){
     getline(cin, judulTemp);
     judulTemp = EditUpLowCase(judulTemp);
 
-    for(int i = 0; i < count; i++){
+    for(int i = 0; i < jumlahBuku; i++){
         if(judulTemp == daftarBuku[i].judulBuku){
             ofstream fileTrunc(fileListBuku, ios::trunc);
             cout << "Tambah Stok Buku: ";
             cin >> stokTemp;
             daftarBuku[i].stok += stokTemp;
-                for(int j = 0; j < count; j++){
+                for(int j = 0; j < jumlahBuku; j++){
                     fileTrunc << daftarBuku[j].idBuku << ' ' << spaceToUnderscore(daftarBuku[j].judulBuku) << ' ' << spaceToUnderscore(daftarBuku[j].genre) << ' ' << spaceToUnderscore(daftarBuku[j].authorBuku) << ' ' << spaceToUnderscore(daftarBuku[j].penerbitBuku) << ' ' << daftarBuku[j].tahunTerbit << ' ' << daftarBuku[j].harga << ' ' << daftarBuku[j].stok << '\n';
                 }
                 cout << "Anda Berhasil Menambahkan Stok ke Buku " << daftarBuku[i].judulBuku << " Menjadi " << daftarBuku[i].stok << "!\n";
@@ -263,17 +278,17 @@ void addBook(int tambahBuku){
     cout << "Masukkan Genre Buku: ";
     getline(cin, daftarBuku[tambahBuku].genre);
     genreTemp = EditUpLowCase(daftarBuku[tambahBuku].genre);
-    genreTemp = spaceToUnderscore(daftarBuku[tambahBuku].genre);
+    genreTemp = spaceToUnderscore(genreTemp);
     
     cout << "Masukkan Author Buku: ";
     getline(cin, daftarBuku[tambahBuku].authorBuku);
     authorTemp = EditUpLowCase(daftarBuku[tambahBuku].authorBuku);
-    authorTemp = spaceToUnderscore(daftarBuku[tambahBuku].authorBuku);
+    authorTemp = spaceToUnderscore(authorTemp);
 
     cout << "Masukkan Penerbit Buku: ";
     getline(cin, daftarBuku[tambahBuku].penerbitBuku);
     penerbitTemp = EditUpLowCase(daftarBuku[tambahBuku].penerbitBuku);
-    penerbitTemp = spaceToUnderscore(daftarBuku[tambahBuku].penerbitBuku);
+    penerbitTemp = spaceToUnderscore(penerbitTemp);
 
     cout << "Masukkan Tahun Terbit: ";
     cin >> daftarBuku[tambahBuku].tahunTerbit;
@@ -283,10 +298,20 @@ void addBook(int tambahBuku){
     cout << "Masukkan Jumlah Stok: ";
     cin >> daftarBuku[tambahBuku].stok;
 
-    fileInput << daftarBuku[tambahBuku].idBuku << ' ' << spaceToUnderscore(judulTemp) << ' ' << genreTemp << ' ' << authorTemp << ' ' << penerbitTemp << ' ' << daftarBuku[tambahBuku].tahunTerbit << ' ' << daftarBuku[tambahBuku].harga << ' ' << daftarBuku[tambahBuku].stok << '\n';
+    fileInput << idTemp << ' ' << spaceToUnderscore(judulTemp) << ' ' << genreTemp << ' ' << authorTemp << ' ' << penerbitTemp << ' ' << daftarBuku[tambahBuku].tahunTerbit << ' ' << daftarBuku[tambahBuku].harga << ' ' << daftarBuku[tambahBuku].stok << '\n';
     system("cls");
 
-    return addBook(tambahBuku - 1);
+    // masukkin ke struct array, biar kebaca data barunya. karna ini rekursi dan fileLoader ada di Menu, jadi tidak terbaca kalau tidak ditambahkan ke struct array dulu
+    daftarBuku[jumlahBuku].idBuku = idTemp;
+    daftarBuku[jumlahBuku].judulBuku = judulTemp;
+    daftarBuku[jumlahBuku].genre = genreTemp;
+    daftarBuku[jumlahBuku].authorBuku = authorTemp;
+    daftarBuku[jumlahBuku].penerbitBuku = penerbitTemp;
+    daftarBuku[jumlahBuku].tahunTerbit = daftarBuku[tambahBuku].tahunTerbit;
+    daftarBuku[jumlahBuku].harga = daftarBuku[tambahBuku].harga;
+    daftarBuku[jumlahBuku].stok = daftarBuku[tambahBuku].stok;
+
+    return addBook(tambahBuku - 1, jumlahBuku + 1);
 }
 
 // Menampilkan List Buku Yang Ada Di File
@@ -360,18 +385,18 @@ void searchBook(int jumlahBuku){
                 cari = EditUpLowCase(cari);
                 j = 0;
                 system("cls");
-                cout << string(30, '=') << '\n';
-                cout << left << setw(24) << "Judul" << setw(15) << "Stok" << '\n';
-                cout << string(30, '=') << '\n';
+                cout << string(45, '=') << '\n';
+                cout << left << setw(30) << "Judul" << setw(8) << "Stok" << setw(6) << "Harga" << '\n';
+                cout << string(45, '=') << '\n';
 
                 for(int i = 0; i <= jumlahBuku; i++){
                     if(daftarBuku[i].authorBuku == cari){
-                        cout << left << setw(24) << daftarBuku[i].judulBuku << setw(15) << daftarBuku[i].stok << '\n';
+                        cout << left << setw(30) << daftarBuku[i].judulBuku << setw(8) << daftarBuku[i].stok << setw(6) << daftarBuku[i].harga << '\n';
                         found = true;
                         j++;
                     }
                 }
-                cout << string(30, '=') << '\n';
+                cout << string(45, '=') << '\n';
 
                 if(!found){
                     system("cls");
@@ -387,18 +412,18 @@ void searchBook(int jumlahBuku){
                 cari = EditUpLowCase(cari);
                 j = 0;
                 system("cls");
-                cout << string(30, '=') << '\n';
-                cout << left << setw(24) << "Judul" << setw(15) << "Stok" << '\n';
-                cout << string(30, '=') << '\n';
+                cout << string(45, '=') << '\n';
+                cout << left << setw(30) << "Judul" << setw(8) << "Stok" << setw(6) << "Harga" << '\n';
+                cout << string(45, '=') << '\n';
 
                 for(int i = 0; i <= jumlahBuku; i++){
                     if(daftarBuku[i].genre == cari){
-                        cout << left << setw(24) << daftarBuku[i].judulBuku << setw(15) << daftarBuku[i].stok << '\n';
+                        cout << left << setw(30) << daftarBuku[i].judulBuku << setw(8) << daftarBuku[i].stok << setw(6) << daftarBuku[i].harga << '\n';
                         found = true;
                         j++;
                     }
                 }
-                cout << string(30, '=') << '\n';
+                cout << string(45, '=') << '\n';
 
                 if(!found){
                     system("cls");
@@ -407,9 +432,14 @@ void searchBook(int jumlahBuku){
                 system("pause");
             break;
             case 4:
+                // disini dikasi cin clear biar klo misal input 4a, a nya ga kebawa ke menu returnnya
+                cin.clear();              // Reset status cin kembali ke normal, gampangnya misal tipe data int tapi input string, nah error kan, nah yang di reset itu status errornya jadi normal
+                cin.ignore(1000, '\n');  // 10000 adalah jumlah karakter yang diabaikan, '\n' sampai ditemukan enter/newline, fungsi cin.ignorenya buat buang karakter di buffer input
                 return;
             break;
             default:
+                cin.clear();              // Reset status cin kembali ke normal, gampangnya misal tipe data int tapi input string, nah error kan, nah yang di reset itu status errornya jadi normal
+                cin.ignore(1000, '\n');  // 10000 adalah jumlah karakter yang diabaikan, '\n' sampai ditemukan enter/newline, fungsi cin.ignorenya buat buang karakter di buffer input
                 cout << "Input Salah!\n";
                 system("pause");
             break;
@@ -457,9 +487,14 @@ void sortBook(int jumlahBuku){
                 done = true;
             break;
             case 3:
+                // disini dikasi cin clear biar klo misal input 4a, a nya ga kebawa ke menu returnnya
+                cin.clear();              // Reset status cin kembali ke normal, gampangnya misal tipe data int tapi input string, nah error kan, nah yang di reset itu status errornya jadi normal
+                cin.ignore(1000, '\n');  // 10000 adalah jumlah karakter yang diabaikan, '\n' sampai ditemukan enter/newline, fungsi cin.ignorenya buat buang karakter di buffer input
                 return;
             break;
             default:
+                cin.clear();              // Reset status cin kembali ke normal, gampangnya misal tipe data int tapi input string, nah error kan, nah yang di reset itu status errornya jadi normal
+                cin.ignore(1000, '\n');  // 10000 adalah jumlah karakter yang diabaikan, '\n' sampai ditemukan enter/newline, fungsi cin.ignorenya buat buang karakter di buffer input
                 cout << "Input Salah!\n";
                 system("pause");
             break;
@@ -489,7 +524,7 @@ void removeData(int jumlahBuku){
     int pil = 0;
     bool terhapus = false;
     string cari;
-    while(pil != 3){
+    while(pil != 3 && !terhapus){
         system("cls");
         cout << "[1]. Hapus Menggunakan ID Buku\n";
         cout << "[2]. Hapus Menggunakan Judul Buku\n";
@@ -525,25 +560,30 @@ void removeData(int jumlahBuku){
                 }
             break;
             case 3:
+                // disini dikasi cin clear biar klo misal input 4a, a nya ga kebawa ke menu returnnya
+                cin.clear();              // Reset status cin kembali ke normal, gampangnya misal tipe data int tapi input string, nah error kan, nah yang di reset itu status errornya jadi normal
+                cin.ignore(1000, '\n');  // 10000 adalah jumlah karakter yang diabaikan, '\n' sampai ditemukan enter/newline, fungsi cin.ignorenya buat buang karakter di buffer input
                 return;
             default:
+                cin.clear();              // Reset status cin kembali ke normal, gampangnya misal tipe data int tapi input string, nah error kan, nah yang di reset itu status errornya jadi normal
+                cin.ignore(1000, '\n');  // 10000 adalah jumlah karakter yang diabaikan, '\n' sampai ditemukan enter/newline, fungsi cin.ignorenya buat buang karakter di buffer input
                 cout << "Input Salah!\n";
                 system("pause");
             break;
         }
+    }
 
-        if(terhapus){
-            ofstream fileTrunc(fileListBuku, ios::trunc);
-            for(int j = 0; j < jumlahBuku; j++){
-                fileTrunc << daftarBuku[j].idBuku << ' ' << spaceToUnderscore(daftarBuku[j].judulBuku) << ' ' << spaceToUnderscore(daftarBuku[j].genre) << ' ' << spaceToUnderscore(daftarBuku[j].authorBuku) << ' ' << spaceToUnderscore(daftarBuku[j].penerbitBuku) << ' ' << daftarBuku[j].tahunTerbit << ' ' << daftarBuku[j].harga << ' ' << daftarBuku[j].stok << '\n';
-            }
-            fileTrunc.close();
-            cout << "Buku Telah Terhapus dan Data Telah Tergeser!\n";
-            system("pause");
-        }else{
-            cout << "Buku Tidak Ditemukan!\n";
-            system("pause");
+    if(terhapus){
+        ofstream fileTrunc(fileListBuku, ios::trunc);
+        for(int j = 0; j < jumlahBuku; j++){
+            fileTrunc << daftarBuku[j].idBuku << ' ' << spaceToUnderscore(daftarBuku[j].judulBuku) << ' ' << spaceToUnderscore(daftarBuku[j].genre) << ' ' << spaceToUnderscore(daftarBuku[j].authorBuku) << ' ' << spaceToUnderscore(daftarBuku[j].penerbitBuku) << ' ' << daftarBuku[j].tahunTerbit << ' ' << daftarBuku[j].harga << ' ' << daftarBuku[j].stok << '\n';
         }
+        fileTrunc.close();
+        cout << "Buku Telah Terhapus!\n";
+        system("pause");
+    }else{
+        cout << "Buku Tidak Ditemukan!\n";
+        system("pause");
     }
 }
 
@@ -633,7 +673,7 @@ void buybook(int jumlahBuku){
 void buyerMenu(string user){
     int pil = 0;
     int jumlahBukuDiToko = 0;
-    while(pil != 5){
+    while(pil != 6){
         system("cls");
         fileLoader(&jumlahBukuDiToko);
         cout << "Hai "<< user << "! \n";
@@ -642,7 +682,8 @@ void buyerMenu(string user){
         cout << "[2]. List Buku\n"; 
         cout << "[3]. Cari Buku\n"; 
         cout << "[4]. Sort Buku\n";
-        cout << "[5]. EXIT\n";
+        cout << "[5]. LOGOUT\n";
+        cout << "[6]. EXIT\n";
         cout << "Input: ";
         cin >> pil;
 
@@ -685,8 +726,18 @@ void buyerMenu(string user){
                 }
             break;
             case 5:
+                mainMenu();
+            break;
+            case 6:
                 exit(0);
             break;
+            default:
+                cin.clear();              // Reset status cin kembali ke normal, gampangnya misal tipe data int tapi input string, nah error kan, nah yang di reset itu status errornya jadi normal
+                cin.ignore(1000, '\n');  // 10000 adalah jumlah karakter yang diabaikan, '\n' sampai ditemukan enter/newline, fungsi cin.ignorenya buat buang karakter di buffer input
+                cout << "Input Salah!\n";
+                system("pause");
+            break;
+
         }
 
     }
@@ -740,6 +791,8 @@ void firstMenu(string &user, int &mode){ // kenapa pake reference user? karena b
                 exit(0);
             break;
             default:
+                cin.clear();              // Reset status cin kembali ke normal, gampangnya misal tipe data int tapi input string, nah error kan, nah yang di reset itu status errornya jadi normal
+                cin.ignore(1000, '\n');  // 10000 adalah jumlah karakter yang diabaikan, '\n' sampai ditemukan enter/newline, fungsi cin.ignorenya buat buang karakter di buffer input
                 cout << "Input Salah!\n";
                 system("pause");
             break;
