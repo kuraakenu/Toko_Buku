@@ -115,8 +115,8 @@ void adminMenu(string user){
     
     int pil, newBook, tambahBuku;
     pil = 0;
-    
     int jumlahBukuDiGudang = 0;
+
     while(pil != 7){
         tambahBuku = 0;
         // Fungsi Memindah File ke Struct Array
@@ -144,7 +144,12 @@ void adminMenu(string user){
                     cout << "Input Harus Angka!\n";
                     system("pause");
                 }else{
-                    addBook(tambahBuku, jumlahBukuDiGudang);
+                    if(tambahBuku == 0){
+                        cout << "Input Harus Lebih Dari 0!\n";
+                        system("pause");
+                    }else{
+                        addBook(tambahBuku, jumlahBukuDiGudang);
+                    }
                 }
             break;
             case 2:
@@ -224,7 +229,7 @@ void addBook(int tambahBuku, int jumlahBuku){
     // karna rekursi, tambahBuku akan terus berkurang sampai 0
     if(tambahBuku == 0){
         fileInput.close();
-        int count = 0;
+        int count = 1;
         ifstream fileCount(fileListBuku);
         while(getline(fileCount, lineCheck)){ // cara kerjanya, getline akan baca kata dari fileCount sampai ke baris akhir, kalau ketemu newline di linecheck=0 maka linecheck +1, baca baris selanjutnya di linecheck = 1 dan seterusnya
             count++;
@@ -233,7 +238,7 @@ void addBook(int tambahBuku, int jumlahBuku){
 
         system("cls");
         cout << "Selesai! Anda Baru Saja Menambahkan Buku Kedalam Gudang!\n";
-        cout << "Di Gudang Sekarang Berisi " << count + 1 << " Judul Buku!\n"; // + 1 karena count masih menghitung file yang sblm masuk ke rekursi, setelah masuk karna blm return atau masuk rekursi lagi, datanya blm ke update 
+        cout << "Di Gudang Sekarang Berisi " << count << " Judul Buku!\n"; // + 1 karena count masih menghitung file yang sblm masuk ke rekursi, setelah masuk karna blm return atau masuk rekursi lagi, datanya blm ke update 
         system("pause");
         return;
     }
@@ -528,7 +533,6 @@ void sortBook(int jumlahBuku){
     }
 }
 
-
 void removeData(int jumlahBuku){
     int pil = 0;
     bool terhapus = false;
@@ -779,12 +783,6 @@ void firstMenu(string &user, int &mode){ // kenapa pake reference user? karena b
                 cout << "Username: ";
                 cin.ignore();
                 getline(cin, user);
-                if(cin.fail()){
-                    cin.clear();              // Reset status cin kembali ke normal, gampangnya misal tipe data int tapi input string, nah error kan, nah yang di reset itu status errornya jadi normal
-                    cin.ignore(1000, '\n');  // 10000 adalah jumlah karakter yang diabaikan, '\n' sampai ditemukan enter/newline, fungsi cin.ignorenya buat buang karakter di buffer input
-                    cout << "Input Harus Angka!\n";
-                    system("pause");
-                }else{
                     if(cekUsername(user)){
                         cout << "Password: ";
                         cin >> pasw;
@@ -793,19 +791,13 @@ void firstMenu(string &user, int &mode){ // kenapa pake reference user? karena b
                             system("pause");
                         }
                     }
-                }
+                
                 break;
                 
             case 2:
                 cout << "Username: ";
                 cin.ignore();
                 getline(cin, user);
-                if(cin.fail()){
-                    cin.clear();              // Reset status cin kembali ke normal, gampangnya misal tipe data int tapi input string, nah error kan, nah yang di reset itu status errornya jadi normal
-                    cin.ignore(1000, '\n');  // 10000 adalah jumlah karakter yang diabaikan, '\n' sampai ditemukan enter/newline, fungsi cin.ignorenya buat buang karakter di buffer input
-                    cout << "Input Harus Angka!\n";
-                    system("pause");
-                }else{
                     if(cekUsername(user)){
                         cout << "Password: ";
                         cin >> pasw;
@@ -815,7 +807,6 @@ void firstMenu(string &user, int &mode){ // kenapa pake reference user? karena b
                             return;
                         }
                     }
-                }
             break;
             case 3:
                 system("cls");
@@ -847,6 +838,9 @@ bool registerUsers(string &user, string pasw){
 
     if(!fileCheck.is_open()){
         cout << "File Error!\n";
+        cout << "File Baru Akan Dibuat!\n";
+        ofstream fileCreate(fileLoginInfo);
+        fileCreate.close();
         system("pause");
         return false;
     }
