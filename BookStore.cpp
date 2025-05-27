@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cctype>
 #include <fstream>
 #include <iomanip>
 
@@ -533,6 +532,7 @@ void sortBook(int jumlahBuku){
     }
 }
 
+// meremove data
 void removeData(int jumlahBuku){
     int pil = 0;
     bool terhapus = false;
@@ -600,6 +600,7 @@ void removeData(int jumlahBuku){
     }
 }
 
+// menu beli buku
 void buybook(int jumlahBuku){
     string cari; char balik;
     int i, j, bayar, kembalian, jmlhbli, totalharga;
