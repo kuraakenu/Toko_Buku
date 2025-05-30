@@ -12,6 +12,6 @@
 
 ## Description
 
-Program ini merupakan tugas akhir dari **Algoritma dan Pemrograman Lanjut Kelas IF-B UPNVY** yang terdiri atas 5 anggota. Program ini memiliki berbagai macam fitur seperti sorting, searching dan sebagainya. Program ini menggunakan bahasa pemrograman **C++**.
+Program ini merupakan tugas akhir dari **Algoritma dan Pemrograman Lanjut Kelas IF-B UPNVY** yang terdiri atas 5 anggota. Program ini memiliki berbagai macam fitur seperti sorting, searching dan sebagainya. Program ini menggunakan bahasa pemrograman **C++**. Program ini merupakan simulasi toko buku online dengan POV admin dan pembeli! ada sistem login dan registernya cuy!
 
 ---
